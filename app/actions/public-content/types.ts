@@ -1,3 +1,7 @@
+import type { MenuProductType } from "@/lib/menu-product-type";
+
+export type { MenuProductType };
+
 export type BannerButton = {
   id?: string;
   label: string;
@@ -25,7 +29,7 @@ export type MenuProduct = {
   slug?: string | null;
   description?: string | null;
   imageUrl?: string | null;
-  type: "DRINK" | "FOOD";
+  type: MenuProductType;
   priceCents?: number | null;
   isAvailable?: boolean;
   isPublished?: boolean;
@@ -100,8 +104,6 @@ export type SingleDataResponse<T> = {
 export type PublicLandingContent = {
   banners: Banner[];
   products: MenuProduct[];
-  drinks: MenuProduct[];
-  food: MenuProduct[];
   events: EventItem[];
   awards: Award[];
   media: MediaItem[];

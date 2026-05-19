@@ -4,16 +4,28 @@ export function cn(...classes: ClassValue[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export function formatPrice(cents?: number | null) {
-  if (typeof cents !== "number") {
-    return "Consultar";
+export function hasDisplayablePrice(priceCents?: number | string | null) {
+  if (priceCents === null || priceCents === undefined || priceCents === "") {
+    return false;
   }
+
+  const cents = typeof priceCents === "number" ? priceCents : Number(priceCents);
+
+  return Number.isFinite(cents) && cents > 0;
+}
+
+export function formatPrice(cents?: number | string | null) {
+  if (!hasDisplayablePrice(cents)) {
+    return null;
+  }
+
+  const value = typeof cents === "number" ? cents : Number(cents);
 
   return new Intl.NumberFormat("es-GT", {
     style: "currency",
     currency: "GTQ",
     maximumFractionDigits: 0,
-  }).format(cents / 100);
+  }).format(value / 100);
 }
 
 export function formatDate(value?: string | null) {

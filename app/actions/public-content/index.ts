@@ -84,10 +84,9 @@ export async function getPublicLandingContent(projectId = env.NEXT_PUBLIC_PROJEC
   }
 
   try {
-    const [banners, drinks, food, events, awards, media, projectConfig] = await Promise.all([
+    const [banners, products, events, awards, media, projectConfig] = await Promise.all([
       fetchPublicList<Banner>(projectId, "banners"),
-      fetchPublicList<MenuProduct>(projectId, "menu-products", { type: "DRINK" }),
-      fetchPublicList<MenuProduct>(projectId, "menu-products", { type: "FOOD" }),
+      fetchPublicList<MenuProduct>(projectId, "menu-products"),
       fetchPublicList<EventItem>(projectId, "events"),
       fetchPublicList<Award>(projectId, "awards"),
       fetchPublicList<MediaItem>(projectId, "media", { isPublic: true }),
@@ -97,9 +96,7 @@ export async function getPublicLandingContent(projectId = env.NEXT_PUBLIC_PROJEC
     return {
       data: {
         banners,
-        products: [...drinks, ...food],
-        drinks,
-        food,
+        products,
         events,
         awards,
         media,
@@ -133,10 +130,11 @@ const fallbackContent: PublicLandingContent = {
   ],
   products: [
     {
-      id: "drink-1",
+      id: "hot-1",
       name: "Filtro Xela",
       description: "Lote de altura con lectura limpia, dulzor medio y final persistente.",
-      type: "DRINK",
+      type: "HOT_DRINKS",
+      sortOrder: 1,
       priceCents: 3200,
       imageUrl:
         "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=900&q=86",
@@ -145,10 +143,11 @@ const fallbackContent: PublicLandingContent = {
       isPublished: true,
     },
     {
-      id: "drink-2",
+      id: "hot-2",
       name: "Espresso de origen",
       description: "Extraccion precisa para revelar proceso, varietal y memoria del lote.",
-      type: "DRINK",
+      type: "HOT_DRINKS",
+      sortOrder: 2,
       priceCents: 3600,
       imageUrl:
         "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=900&q=86",
@@ -156,73 +155,36 @@ const fallbackContent: PublicLandingContent = {
       isPublished: true,
     },
     {
-      id: "food-1",
-      name: "Tostada de temporada",
-      description: "Pan artesanal, producto local y una composicion pensada para acompanar la taza.",
-      type: "FOOD",
-      priceCents: 5400,
-      imageUrl:
-        "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=900&q=86",
-      isAvailable: true,
-      isFeatured: true,
-      isPublished: true,
-    },
-    {
-      id: "food-2",
-      name: "Pan dulce de barra",
-      description: "Masa de casa, textura ligera y perfil sobrio para maridar con filtrados.",
-      type: "FOOD",
-      priceCents: 2800,
-      imageUrl:
-        "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=86",
-      isAvailable: true,
-      isPublished: true,
-    },
-  ],
-  drinks: [
-    {
-      id: "drink-1",
-      name: "Filtro Xela",
-      description: "Lote de altura con lectura limpia, dulzor medio y final persistente.",
-      type: "DRINK",
-      priceCents: 3200,
-      imageUrl:
-        "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=900&q=86",
-      isAvailable: true,
-      isFeatured: true,
-      isPublished: true,
-    },
-    {
-      id: "drink-2",
-      name: "Espresso de origen",
-      description: "Extraccion precisa para revelar proceso, varietal y memoria del lote.",
-      type: "DRINK",
-      priceCents: 3600,
+      id: "cold-1",
+      name: "Cold brew de temporada",
+      description: "Extraccion en frio, cuerpo suave y notas de cacao.",
+      type: "COLD_DRINKS",
+      sortOrder: 1,
+      priceCents: 3400,
       imageUrl:
         "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=900&q=86",
       isAvailable: true,
       isPublished: true,
     },
-  ],
-  food: [
     {
-      id: "food-1",
+      id: "plate-1",
       name: "Tostada de temporada",
       description: "Pan artesanal, producto local y una composicion pensada para acompanar la taza.",
-      type: "FOOD",
+      type: "PLATES",
+      sortOrder: 1,
       priceCents: 5400,
       imageUrl:
         "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=900&q=86",
       isAvailable: true,
-      isFeatured: true,
       isPublished: true,
     },
     {
-      id: "food-2",
-      name: "Pan dulce de barra",
-      description: "Masa de casa, textura ligera y perfil sobrio para maridar con filtrados.",
-      type: "FOOD",
-      priceCents: 2800,
+      id: "brunch-1",
+      name: "Brunch de barra",
+      description: "Huevos, pan de masa madre y acompanamiento de temporada.",
+      type: "BRUNCH",
+      sortOrder: 1,
+      priceCents: 6800,
       imageUrl:
         "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=86",
       isAvailable: true,

@@ -8,7 +8,7 @@ import { useMemo, useState } from "react";
 import type { MenuProduct } from "@/app/actions/public-content/types";
 import { BrandButton } from "@/components/landing/brand-button";
 import { RichText } from "@/components/landing/rich-text";
-import { cn, formatPrice } from "@/lib/utils";
+import { cn, formatPrice, hasDisplayablePrice } from "@/lib/utils";
 
 const PAGE_SIZE = 3;
 
@@ -21,14 +21,23 @@ type MenuCarouselProps = {
 export function MenuCarousel({ products, title, emptyText }: MenuCarouselProps) {
   const pages = useMemo(() => chunkProducts(products, PAGE_SIZE), [products]);
   const [pageIndex, setPageIndex] = useState(0);
-  const page = pages[pageIndex] ?? [];
+  const safePageIndex = pages.length === 0 ? 0 : pageIndex % pages.length;
+  const page = pages[safePageIndex] ?? [];
   const hasManyPages = pages.length > 1;
 
   function goToPrevious() {
+    if (pages.length === 0) {
+      return;
+    }
+
     setPageIndex((current) => (current - 1 + pages.length) % pages.length);
   }
 
   function goToNext() {
+    if (pages.length === 0) {
+      return;
+    }
+
     setPageIndex((current) => (current + 1) % pages.length);
   }
 
@@ -39,7 +48,7 @@ export function MenuCarousel({ products, title, emptyText }: MenuCarouselProps) 
           <h3 className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--gris-suave)]">{title}</h3>
           {hasManyPages ? (
             <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[var(--gris-medio)]">
-              {String(pageIndex + 1).padStart(2, "0")} / {String(pages.length).padStart(2, "0")}
+              {String(safePageIndex + 1).padStart(2, "0")} / {String(pages.length).padStart(2, "0")}
             </p>
           ) : null}
         </div>
@@ -65,7 +74,7 @@ export function MenuCarousel({ products, title, emptyText }: MenuCarouselProps) 
                 className="divide-y divide-[var(--blanco-roto)]/16"
                 exit={{ opacity: 0, x: -26 }}
                 initial={{ opacity: 0, x: 26 }}
-                key={`${title}-${pageIndex}`}
+                key={`${title}-${safePageIndex}`}
                 transition={{ duration: 0.42, ease: "easeOut" }}
               >
                 {page.map((product) => (
@@ -82,7 +91,7 @@ export function MenuCarousel({ products, title, emptyText }: MenuCarouselProps) 
                   aria-label={`Ir a pagina ${index + 1} de ${title}`}
                   className={cn(
                     "h-px transition-all",
-                    index === pageIndex
+                    index === safePageIndex
                       ? "w-12 bg-[var(--blanco-roto)]"
                       : "w-7 bg-[var(--blanco-roto)]/25 hover:bg-[var(--blanco-roto)]/55",
                   )}
@@ -102,23 +111,25 @@ export function MenuCarousel({ products, title, emptyText }: MenuCarouselProps) 
 }
 
 function MenuItem({ product }: { product: MenuProduct }) {
+  const priceLabel = formatPrice(product.priceCents);
+  const showAvailability = hasDisplayablePrice(product.priceCents) && product.isAvailable === false;
+
   return (
     <article className="group grid min-h-[12rem] gap-5 py-7 sm:grid-cols-[8rem_1fr]">
       <EditorialImage className="aspect-square" src={product.imageUrl} alt={product.name} />
       <div>
-        <div className="flex items-start justify-between gap-5">
+        <div className={cn("flex items-start gap-5", priceLabel && "justify-between")}>
           <h4 className="font-display text-4xl leading-none">{product.name}</h4>
-          <p className="shrink-0 text-sm font-semibold text-[var(--blanco-roto)]">{formatPrice(product.priceCents)}</p>
+          {priceLabel ? (
+            <p className="shrink-0 text-sm font-semibold text-[var(--blanco-roto)]">{priceLabel}</p>
+          ) : null}
         </div>
         <RichText className="mt-4 leading-7 text-[var(--gris-suave)]/82" html={product.description} />
-        <p
-          className={cn(
-            "mt-5 text-xs font-semibold uppercase tracking-[0.22em]",
-            product.isAvailable === false ? "text-[var(--gris-medio)]" : "text-[var(--azul-grisaceo)]",
-          )}
-        >
-          {product.isAvailable === false ? "Fuera de temporada" : "Disponible"}
-        </p>
+        {showAvailability ? (
+          <p className="mt-5 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--gris-medio)]">
+            Fuera de temporada
+          </p>
+        ) : null}
       </div>
     </article>
   );

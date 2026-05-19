@@ -18,6 +18,8 @@ import { MenuCarousel } from "@/components/landing/menu-carousel";
 import { MotionSection } from "@/components/landing/motion-shell";
 import { RichText } from "@/components/landing/rich-text";
 import { SiteHeader } from "@/components/landing/site-header";
+import { getMenuCategoriesWithProducts, groupMenuProductsByType } from "@/lib/menu-products";
+import { humanizeMenuProductType } from "@/lib/menu-product-type";
 import { cn, formatDate } from "@/lib/utils";
 import { env } from "@/utils/env";
 
@@ -36,11 +38,9 @@ const traceability = [
 ];
 
 export function PublicLanding({ content, warning }: PublicLandingProps) {
-  const drinks = content.drinks.filter((product) => product.isPublished !== false);
-  const food = content.food.filter((product) => product.isPublished !== false);
-  const products = (content.products.length ? content.products : [...drinks, ...food]).filter(
-    (product) => product.isPublished !== false,
-  );
+  const products = content.products.filter((product) => product.isPublished !== false);
+  const productsByType = groupMenuProductsByType(products);
+  const menuCategories = getMenuCategoriesWithProducts(productsByType);
   const featuredProduct = products.find((product) => product.isFeatured) ?? products[0];
   const events = content.events
     .filter((event) => event.isActive !== false && event.isPublished !== false && event.status !== "CANCELLED")
@@ -104,16 +104,24 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
         <div className="mx-auto max-w-[1480px]">
           <div className="grid gap-10 lg:grid-cols-[0.42fr_1fr]">
             <SectionLabel dark number="02" eyebrow="Menu destacado" />
-            <SectionHeading
-              copy="Bebidas y platillos alimentados desde el CMS, presentados como una carta editorial: precisa, sobria y de temporada."
-              dark
-              title="El menu cambia porque la busqueda continua."
-            />
+            <SectionHeading dark title="El menu cambia porque la busqueda continua." />
           </div>
 
-          <div className="mt-14 grid gap-12 lg:grid-cols-2">
-            <MenuCarousel emptyText="No hay bebidas publicadas por el momento." products={drinks} title="Bebidas" />
-            <MenuCarousel emptyText="No hay comida publicada por el momento." products={food} title="Comida" />
+          <div className="mt-14 grid gap-14 lg:grid-cols-2">
+            {menuCategories.length ? (
+              menuCategories.map((type) => (
+                <MenuCarousel
+                  emptyText={`No hay ${humanizeMenuProductType(type).toLowerCase()} publicados por el momento.`}
+                  key={type}
+                  products={productsByType[type]}
+                  title={humanizeMenuProductType(type)}
+                />
+              ))
+            ) : (
+              <div className="border border-dashed border-[var(--blanco-roto)]/20 p-6 text-sm text-[var(--gris-suave)] lg:col-span-2">
+                No hay productos publicados en el menu por el momento.
+              </div>
+            )}
           </div>
         </div>
       </MotionSection>
@@ -316,13 +324,15 @@ function SectionLabel({ number, eyebrow, dark = false }: { number: string; eyebr
   );
 }
 
-function SectionHeading({ title, copy, dark = false }: { title: string; copy: string; dark?: boolean }) {
+function SectionHeading({ title, copy, dark = false }: { title: string; copy?: string; dark?: boolean }) {
   return (
     <div>
       <h2 className={cn("font-display max-w-4xl text-balance text-5xl leading-none sm:text-7xl", dark ? "text-[var(--blanco-roto)]" : "text-[var(--negro-profundo)]")}>
         {title}
       </h2>
-      <p className={cn("mt-7 max-w-2xl text-lg leading-8", dark ? "text-[var(--gris-suave)]/82" : "text-[var(--gris-oscuro)]")}>{copy}</p>
+      {copy ? (
+        <p className={cn("mt-7 max-w-2xl text-lg leading-8", dark ? "text-[var(--gris-suave)]/82" : "text-[var(--gris-oscuro)]")}>{copy}</p>
+      ) : null}
     </div>
   );
 }
