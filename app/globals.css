@@ -1,26 +1,78 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --negro-profundo: #0b0b0b;
+  --carbon: #000000;
+  --gris-oscuro: #3e3e3c;
+  --gris-medio: #7a7979;
+  --gris-suave: #e4e4e6;
+  --blanco-roto: #f9f6f2;
+  --azul-grisaceo: #8594aa;
+  --background: var(--blanco-roto);
+  --foreground: var(--negro-profundo);
+  --linea: rgba(11, 11, 11, 0.14);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: "Nimbus Sans", Helvetica, Arial, ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family:
+    "Nimbus Sans",
+    Helvetica,
+    Arial,
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+::selection {
+  background: rgba(133, 148, 170, 0.32);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.font-display {
+  font-family:
+    "Albertus Nova",
+    Albertus,
+    "Albertus MT",
+    "Times New Roman",
+    ui-serif,
+    Georgia,
+    serif;
+  font-weight: 700;
+  letter-spacing: 0;
 }
