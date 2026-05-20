@@ -7,6 +7,7 @@ import type {
   Banner,
   DataResponse,
   EventItem,
+  EventOrder,
   MediaItem,
   MenuProduct,
   ProjectConfig,
@@ -43,7 +44,7 @@ async function fetchJson<T>(url: URL): Promise<T> {
 
 function getPublicListOrder(resource: PublicResource): { orderBy: string; order: "ASC" | "DESC" } {
   if (resource === "events") {
-    return { orderBy: "startDate", order: "ASC" };
+    return { orderBy: "startDate", order: "DESC" };
   }
 
   if (resource === "awards") {
@@ -81,6 +82,70 @@ async function fetchProjectConfig(projectId: string): Promise<ProjectConfig> {
     return response.data ?? {};
   } catch {
     return {};
+  }
+}
+
+function sortFallbackEvents(events: EventItem[], order: EventOrder) {
+  return [...events].sort((a, b) => {
+    const first = a.startDate ? new Date(a.startDate).getTime() : 0;
+    const second = b.startDate ? new Date(b.startDate).getTime() : 0;
+
+    return order === "ASC" ? first - second : second - first;
+  });
+}
+
+function filterFallbackEventsByQuery(events: EventItem[], query: string) {
+  const normalizedQuery = query.trim().toLowerCase();
+
+  if (!normalizedQuery) {
+    return events;
+  }
+
+  return events.filter((event) =>
+    [event.title, event.description, event.location]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(normalizedQuery)),
+  );
+}
+
+export async function getPublicEvents(
+  order: EventOrder = "DESC",
+  query = "",
+  projectId = env.NEXT_PUBLIC_PROJECT_ID,
+): Promise<{
+  data: EventItem[];
+  error?: string;
+  missingProjectId?: boolean;
+}> {
+  const normalizedQuery = query.trim();
+  const fallbackEvents = filterFallbackEventsByQuery(
+    sortFallbackEvents(fallbackContent.events, order),
+    normalizedQuery,
+  );
+
+  if (!projectId) {
+    return {
+      data: fallbackEvents,
+      error: "Configura NEXT_PUBLIC_PROJECT_ID para consumir eventos reales del CMS.",
+      missingProjectId: true,
+    };
+  }
+
+  try {
+    const events = await fetchPublicList<EventItem>(projectId, "events", {
+      orderBy: "startDate",
+      order,
+      ...(normalizedQuery ? { query: normalizedQuery } : {}),
+    });
+
+    return { data: events };
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : "No se pudo conectar con el API publico.";
+
+    return {
+      data: fallbackEvents,
+      error: `Mostrando eventos demo porque el API no respondio: ${detail}`,
+    };
   }
 }
 

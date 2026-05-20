@@ -54,6 +54,8 @@ export type EventItem = {
   sortOrder?: number;
 };
 
+export type EventOrder = "ASC" | "DESC";
+
 export type Award = {
   id: string;
   title: string;

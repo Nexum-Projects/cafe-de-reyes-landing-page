@@ -177,7 +177,7 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
             <SectionLabel number="05" eyebrow="Eventos" />
             <SectionHeading title="Encuentros para entender el cafe, no solo tomarlo." copy="Catas, lanzamientos de lote y experiencias que hacen visible el oficio." />
           </div>
-          <div className="mt-14 border-t border-[var(--linea)]">
+          <div className="mt-14">
             <EventsCarousel emptyText="No hay eventos publicados por el momento." events={events} />
           </div>
         </div>
