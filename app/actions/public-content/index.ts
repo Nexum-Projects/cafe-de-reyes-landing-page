@@ -4,6 +4,7 @@ import { env } from "@/utils/env";
 
 import type {
   Award,
+  AwardOrder,
   Banner,
   DataResponse,
   EventItem,
@@ -127,6 +128,29 @@ function filterFallbackMenuProductsByQuery(products: MenuProduct[], query: strin
   );
 }
 
+function sortFallbackAwards(awards: Award[], order: AwardOrder) {
+  return [...awards].sort((a, b) => {
+    const first = a.awardedAt ? new Date(a.awardedAt).getTime() : 0;
+    const second = b.awardedAt ? new Date(b.awardedAt).getTime() : 0;
+
+    return order === "ASC" ? first - second : second - first;
+  });
+}
+
+function filterFallbackAwardsByQuery(awards: Award[], query: string) {
+  const normalizedQuery = query.trim().toLowerCase();
+
+  if (!normalizedQuery) {
+    return awards;
+  }
+
+  return awards.filter((award) =>
+    [award.title, award.description, award.sourceName]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(normalizedQuery)),
+  );
+}
+
 export async function getPublicMenuProducts(
   type: MenuProductType,
   query = "",
@@ -163,6 +187,47 @@ export async function getPublicMenuProducts(
     return {
       data: fallbackProducts,
       error: `Mostrando productos demo porque el API no respondio: ${detail}`,
+    };
+  }
+}
+
+export async function getPublicAwards(
+  order: AwardOrder = "DESC",
+  query = "",
+  projectId = env.NEXT_PUBLIC_PROJECT_ID,
+): Promise<{
+  data: Award[];
+  error?: string;
+  missingProjectId?: boolean;
+}> {
+  const normalizedQuery = query.trim();
+  const fallbackAwards = filterFallbackAwardsByQuery(
+    sortFallbackAwards(fallbackContent.awards, order),
+    normalizedQuery,
+  );
+
+  if (!projectId) {
+    return {
+      data: fallbackAwards,
+      error: "Configura NEXT_PUBLIC_PROJECT_ID para consumir logros reales del CMS.",
+      missingProjectId: true,
+    };
+  }
+
+  try {
+    const awards = await fetchPublicList<Award>(projectId, "awards", {
+      orderBy: "awardedAt",
+      order,
+      ...(normalizedQuery ? { query: normalizedQuery } : {}),
+    });
+
+    return { data: awards };
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : "No se pudo conectar con el API publico.";
+
+    return {
+      data: fallbackAwards,
+      error: `Mostrando logros demo porque el API no respondio: ${detail}`,
     };
   }
 }

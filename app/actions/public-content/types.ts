@@ -56,6 +56,8 @@ export type EventItem = {
 
 export type EventOrder = "ASC" | "DESC";
 
+export type AwardOrder = "ASC" | "DESC";
+
 export type Award = {
   id: string;
   title: string;

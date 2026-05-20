@@ -1,11 +1,12 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Award } from "lucide-react";
+import { ArrowDownAZ, ArrowLeft, ArrowRight, ArrowUpAZ, Award, Search, X } from "lucide-react";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 
-import type { Award as AwardItem } from "@/app/actions/public-content/types";
+import { getPublicAwards } from "@/app/actions/public-content";
+import type { Award as AwardItem, AwardOrder } from "@/app/actions/public-content/types";
 import { BrandButton } from "@/components/landing/brand-button";
 import { RichText } from "@/components/landing/rich-text";
 import { cn, formatDate } from "@/lib/utils";
@@ -18,11 +19,75 @@ type AwardsCarouselProps = {
 };
 
 export function AwardsCarousel({ awards, emptyText }: AwardsCarouselProps) {
-  const pages = useMemo(() => chunkItems(awards, PAGE_SIZE), [awards]);
+  const [order, setOrder] = useState<AwardOrder>("DESC");
+  const [query, setQuery] = useState("");
+  const [activeQuery, setActiveQuery] = useState("");
+  const [visibleAwards, setVisibleAwards] = useState(awards);
+  const [filterError, setFilterError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const didMountRef = useRef(false);
+  const requestIdRef = useRef(0);
+  const skipDebouncedSearchRef = useRef(false);
+  const pages = useMemo(() => chunkItems(visibleAwards, PAGE_SIZE), [visibleAwards]);
   const [pageIndex, setPageIndex] = useState(0);
   const safePageIndex = pages.length === 0 ? 0 : pageIndex % pages.length;
   const page = pages[safePageIndex] ?? [];
   const hasManyPages = pages.length > 1;
+  const resolvedEmptyText = activeQuery ? "No se encuentran logros para la busqueda." : emptyText;
+
+  const fetchAwards = useCallback((nextOrder: AwardOrder, nextQuery: string) => {
+    const normalizedQuery = nextQuery.trim();
+    const requestId = requestIdRef.current + 1;
+    requestIdRef.current = requestId;
+
+    setOrder(nextOrder);
+    setActiveQuery(normalizedQuery);
+    setPageIndex(0);
+    setFilterError(null);
+
+    startTransition(async () => {
+      const response = await getPublicAwards(nextOrder, normalizedQuery);
+      const fallbackAwards = filterAwardsByQuery(sortAwards(awards, nextOrder), normalizedQuery);
+
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
+
+      setVisibleAwards(response.error ? fallbackAwards : response.data);
+      setFilterError(response.error ?? null);
+    });
+  }, [awards]);
+
+  useEffect(() => {
+    if (!didMountRef.current) {
+      didMountRef.current = true;
+      return;
+    }
+
+    if (skipDebouncedSearchRef.current) {
+      skipDebouncedSearchRef.current = false;
+      return;
+    }
+
+    const searchTimeout = window.setTimeout(() => {
+      fetchAwards(order, query);
+    }, 320);
+
+    return () => window.clearTimeout(searchTimeout);
+  }, [fetchAwards, order, query]);
+
+  function changeOrder(nextOrder: AwardOrder) {
+    if (nextOrder === order && !filterError) {
+      return;
+    }
+
+    skipDebouncedSearchRef.current = true;
+    fetchAwards(nextOrder, query);
+  }
+
+  function clearSearch() {
+    setQuery("");
+  }
 
   function goToPrevious() {
     if (pages.length === 0) {
@@ -42,23 +107,89 @@ export function AwardsCarousel({ awards, emptyText }: AwardsCarouselProps) {
 
   return (
     <div className="min-w-0">
-      {hasManyPages ? (
-        <div className="flex items-center justify-between gap-5 border-b border-[var(--blanco-roto)]/18 pb-4">
-          <p className="text-xs uppercase tracking-[0.18em] text-[var(--gris-medio)]">
-            {String(safePageIndex + 1).padStart(2, "0")} / {String(pages.length).padStart(2, "0")}
-          </p>
-          <div className="flex items-center gap-2">
-            <BrandButton aria-label="Pagina anterior de reconocimientos" onClick={goToPrevious} size="icon" type="button" variant="ghost">
-              <ArrowLeft className="h-4 w-4" />
-            </BrandButton>
-            <BrandButton aria-label="Siguiente pagina de reconocimientos" onClick={goToNext} size="icon" type="button" variant="ghost">
-              <ArrowRight className="h-4 w-4" />
-            </BrandButton>
+      <div className="flex flex-col gap-2 pb-5 lg:flex-row lg:items-center">
+        <div className="flex w-full flex-1 flex-col gap-4 sm:flex-row sm:items-center">
+          <div className="min-w-[5.5rem]">
+            <p className="text-xs uppercase tracking-[0.18em] text-[var(--gris-medio)]">
+              {visibleAwards.length ? `${String(safePageIndex + 1).padStart(2, "0")} / ${String(Math.max(pages.length, 1)).padStart(2, "0")}` : "00 / 00"}
+            </p>
+            {isPending ? (
+              <p className="mt-2 text-[0.65rem] uppercase tracking-[0.16em] text-[var(--azul-grisaceo)]">
+                Buscando
+              </p>
+            ) : null}
           </div>
+          <div className="flex h-11 w-full items-center border border-[var(--blanco-roto)]/18 bg-[var(--carbon)]/18">
+            <Search className="ml-3 h-4 w-4 text-[var(--azul-grisaceo)]" />
+            <input
+              aria-label="Buscar logros"
+              className="h-full min-w-0 flex-1 bg-transparent px-3 text-sm text-[var(--blanco-roto)] outline-none placeholder:text-[var(--gris-medio)]"
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Buscar logro"
+              type="search"
+              value={query}
+            />
+            {query ? (
+              <button
+                aria-label="Limpiar busqueda"
+                className="inline-flex h-full w-10 items-center justify-center text-[var(--gris-medio)] transition hover:text-[var(--blanco-roto)]"
+                onClick={clearSearch}
+                type="button"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            ) : null}
+          </div>
+        </div>
+        <div className="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:shrink-0">
+          <button
+            className={cn(
+              "inline-flex h-11 items-center gap-2 border px-4 text-xs font-semibold uppercase tracking-[0.16em] transition",
+              order === "DESC"
+                ? "border-[var(--blanco-roto)] bg-[var(--blanco-roto)] text-[var(--negro-profundo)]"
+                : "border-[var(--blanco-roto)]/20 text-[var(--gris-suave)] hover:border-[var(--blanco-roto)]/55",
+            )}
+            disabled={isPending}
+            onClick={() => changeOrder("DESC")}
+            type="button"
+          >
+            <ArrowUpAZ className="h-4 w-4" />
+            Recientes
+          </button>
+          <button
+            className={cn(
+              "inline-flex h-11 items-center gap-2 border px-4 text-xs font-semibold uppercase tracking-[0.16em] transition",
+              order === "ASC"
+                ? "border-[var(--blanco-roto)] bg-[var(--blanco-roto)] text-[var(--negro-profundo)]"
+                : "border-[var(--blanco-roto)]/20 text-[var(--gris-suave)] hover:border-[var(--blanco-roto)]/55",
+            )}
+            disabled={isPending}
+            onClick={() => changeOrder("ASC")}
+            type="button"
+          >
+            <ArrowDownAZ className="h-4 w-4" />
+            Antiguos
+          </button>
+          {hasManyPages ? (
+            <div className="flex items-center gap-2">
+              <BrandButton aria-label="Pagina anterior de reconocimientos" onClick={goToPrevious} size="icon" type="button" variant="ghost">
+                <ArrowLeft className="h-4 w-4" />
+              </BrandButton>
+              <BrandButton aria-label="Siguiente pagina de reconocimientos" onClick={goToNext} size="icon" type="button" variant="ghost">
+                <ArrowRight className="h-4 w-4" />
+              </BrandButton>
+            </div>
+          ) : null}
+        </div>
+      </div>
+
+      {filterError ? (
+        <div className="mb-3 min-h-5">
+          <p className="text-sm text-[var(--gris-medio)]">{filterError}</p>
         </div>
       ) : null}
 
-      {awards.length ? (
+      {visibleAwards.length ? (
         <>
           <div className="relative min-h-[33rem] overflow-hidden">
             <AnimatePresence mode="wait" initial={false}>
@@ -67,7 +198,7 @@ export function AwardsCarousel({ awards, emptyText }: AwardsCarouselProps) {
                 className="divide-y divide-[var(--blanco-roto)]/16"
                 exit={{ opacity: 0, x: -26 }}
                 initial={{ opacity: 0, x: 26 }}
-                key={safePageIndex}
+                key={`${order}-${activeQuery}-${safePageIndex}`}
                 transition={{ duration: 0.42, ease: "easeOut" }}
               >
                 {page.map((award) => (
@@ -100,7 +231,7 @@ export function AwardsCarousel({ awards, emptyText }: AwardsCarouselProps) {
           ) : null}
         </>
       ) : (
-        <EmptyState text={emptyText} />
+        <EmptyState text={resolvedEmptyText} />
       )}
     </div>
   );
@@ -148,7 +279,11 @@ function AwardImage({ src, alt, className }: { src?: string | null; alt: string;
 }
 
 function EmptyState({ text }: { text: string }) {
-  return <div className="border border-dashed border-[var(--blanco-roto)]/20 p-6 text-sm text-[var(--gris-suave)]">{text}</div>;
+  return (
+    <div className="flex justify-center py-12 text-center">
+      <p className="max-w-xl text-sm leading-7 text-[var(--gris-medio)]">{text}</p>
+    </div>
+  );
 }
 
 function chunkItems<T>(items: T[], size: number) {
@@ -159,4 +294,27 @@ function chunkItems<T>(items: T[], size: number) {
   }
 
   return chunks;
+}
+
+function sortAwards(awards: AwardItem[], order: AwardOrder) {
+  return [...awards].sort((a, b) => {
+    const first = a.awardedAt ? new Date(a.awardedAt).getTime() : 0;
+    const second = b.awardedAt ? new Date(b.awardedAt).getTime() : 0;
+
+    return order === "ASC" ? first - second : second - first;
+  });
+}
+
+function filterAwardsByQuery(awards: AwardItem[], query: string) {
+  const normalizedQuery = query.trim().toLowerCase();
+
+  if (!normalizedQuery) {
+    return awards;
+  }
+
+  return awards.filter((award) =>
+    [award.title, award.description, award.sourceName]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(normalizedQuery)),
+  );
 }
