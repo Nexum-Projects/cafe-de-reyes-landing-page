@@ -10,6 +10,7 @@ import type {
   EventOrder,
   MediaItem,
   MenuProduct,
+  MenuProductType,
   ProjectConfig,
   PublicLandingContent,
   SingleDataResponse,
@@ -106,6 +107,64 @@ function filterFallbackEventsByQuery(events: EventItem[], query: string) {
       .filter(Boolean)
       .some((value) => String(value).toLowerCase().includes(normalizedQuery)),
   );
+}
+
+function sortFallbackMenuProducts(products: MenuProduct[]) {
+  return [...products].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+}
+
+function filterFallbackMenuProductsByQuery(products: MenuProduct[], query: string) {
+  const normalizedQuery = query.trim().toLowerCase();
+
+  if (!normalizedQuery) {
+    return products;
+  }
+
+  return products.filter((product) =>
+    [product.name, product.description]
+      .filter(Boolean)
+      .some((value) => String(value).toLowerCase().includes(normalizedQuery)),
+  );
+}
+
+export async function getPublicMenuProducts(
+  type: MenuProductType,
+  query = "",
+  projectId = env.NEXT_PUBLIC_PROJECT_ID,
+): Promise<{
+  data: MenuProduct[];
+  error?: string;
+  missingProjectId?: boolean;
+}> {
+  const normalizedQuery = query.trim();
+  const fallbackProducts = filterFallbackMenuProductsByQuery(
+    sortFallbackMenuProducts(fallbackContent.products.filter((product) => product.type === type)),
+    normalizedQuery,
+  );
+
+  if (!projectId) {
+    return {
+      data: fallbackProducts,
+      error: "Configura NEXT_PUBLIC_PROJECT_ID para consumir productos reales del CMS.",
+      missingProjectId: true,
+    };
+  }
+
+  try {
+    const products = await fetchPublicList<MenuProduct>(projectId, "menu-products", {
+      type,
+      ...(normalizedQuery ? { query: normalizedQuery } : {}),
+    });
+
+    return { data: products };
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : "No se pudo conectar con el API publico.";
+
+    return {
+      data: fallbackProducts,
+      error: `Mostrando productos demo porque el API no respondio: ${detail}`,
+    };
+  }
 }
 
 export async function getPublicEvents(

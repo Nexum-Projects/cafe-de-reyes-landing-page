@@ -17,7 +17,6 @@ import { MenuCarousel } from "@/components/landing/menu-carousel";
 import { MotionSection } from "@/components/landing/motion-shell";
 import { SiteHeader } from "@/components/landing/site-header";
 import { getMenuCategoriesWithProducts, groupMenuProductsByType } from "@/lib/menu-products";
-import { humanizeMenuProductType } from "@/lib/menu-product-type";
 import { cn } from "@/lib/utils";
 import { env } from "@/utils/env";
 import { AwardsCarousel } from "./awards-carousel";
@@ -104,18 +103,15 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
             <SectionHeading dark title="El menu cambia porque la busqueda continua." />
           </div>
 
-          <div className="mt-14 grid gap-14 lg:grid-cols-2">
+          <div className="mt-14">
             {menuCategories.length ? (
-              menuCategories.map((type) => (
-                <MenuCarousel
-                  emptyText={`No hay ${humanizeMenuProductType(type).toLowerCase()} publicados por el momento.`}
-                  key={type}
-                  products={productsByType[type]}
-                  title={humanizeMenuProductType(type)}
-                />
-              ))
+              <MenuCarousel
+                categories={menuCategories}
+                emptyText="No hay productos publicados en esta categoria por el momento."
+                initialProductsByType={productsByType}
+              />
             ) : (
-              <div className="border border-dashed border-[var(--blanco-roto)]/20 p-6 text-sm text-[var(--gris-suave)] lg:col-span-2">
+              <div className="py-12 text-center text-sm text-[var(--gris-medio)]">
                 No hay productos publicados en el menu por el momento.
               </div>
             )}
