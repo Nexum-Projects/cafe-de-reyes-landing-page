@@ -41,16 +41,30 @@ async function fetchJson<T>(url: URL): Promise<T> {
   return response.json() as Promise<T>;
 }
 
+function getPublicListOrder(resource: PublicResource): { orderBy: string; order: "ASC" | "DESC" } {
+  if (resource === "events") {
+    return { orderBy: "startDate", order: "ASC" };
+  }
+
+  if (resource === "awards") {
+    return { orderBy: "awardedAt", order: "DESC" };
+  }
+
+  return { orderBy: "sortOrder", order: "ASC" };
+}
+
 async function fetchPublicList<T>(
   projectId: string,
   resource: PublicResource,
   params?: Record<string, string | number | boolean>,
 ) {
+  const { orderBy, order } = getPublicListOrder(resource);
+
   const response = await fetchJson<DataResponse<T>>(
     buildUrl(`/public/projects/${projectId}/${resource}`, {
       pagination: false,
-      orderBy: resource === "events" ? "startDate" : "sortOrder",
-      order: "ASC",
+      orderBy,
+      order,
       ...params,
     }),
   );

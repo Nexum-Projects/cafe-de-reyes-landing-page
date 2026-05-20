@@ -1,7 +1,5 @@
 import {
   AtSign,
-  Award,
-  CalendarDays,
   Camera,
   Clock,
   Compass,
@@ -11,17 +9,18 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
-import type { EventItem, PublicLandingContent } from "@/app/actions/public-content/types";
+import type { PublicLandingContent } from "@/app/actions/public-content/types";
 import { BannerCarousel } from "@/components/landing/banner-carousel";
 import { BrandButtonLink } from "@/components/landing/brand-button";
+import { EventsCarousel } from "@/components/landing/events-carousel";
 import { MenuCarousel } from "@/components/landing/menu-carousel";
 import { MotionSection } from "@/components/landing/motion-shell";
-import { RichText } from "@/components/landing/rich-text";
 import { SiteHeader } from "@/components/landing/site-header";
 import { getMenuCategoriesWithProducts, groupMenuProductsByType } from "@/lib/menu-products";
 import { humanizeMenuProductType } from "@/lib/menu-product-type";
-import { cn, formatDate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { env } from "@/utils/env";
+import { AwardsCarousel } from "./awards-carousel";
 
 type PublicLandingProps = {
   content: PublicLandingContent;
@@ -42,10 +41,10 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
   const productsByType = groupMenuProductsByType(products);
   const menuCategories = getMenuCategoriesWithProducts(productsByType);
   const featuredProduct = products.find((product) => product.isFeatured) ?? products[0];
-  const events = content.events
-    .filter((event) => event.isActive !== false && event.isPublished !== false && event.status !== "CANCELLED")
-    .slice(0, 4);
-  const awards = content.awards.filter((award) => award.isPublished !== false).slice(0, 4);
+  const events = content.events.filter(
+    (event) => event.isActive !== false && event.isPublished !== false && event.status !== "CANCELLED",
+  );
+  const awards = content.awards.filter((award) => award.isPublished !== false);
   const media = content.media.filter((item) => item.type === "IMAGE" && item.isPublic !== false).slice(0, 8);
   const siteName = content.projectConfig.siteName ?? env.NEXT_PUBLIC_SITE_NAME ?? "Cafe de Reyes";
   const address = content.projectConfig.address ?? "Quetzaltenango, Guatemala";
@@ -168,31 +167,7 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
               El reconocimiento es consecuencia.
             </h2>
           </div>
-          <div className="grid gap-5">
-            {awards.length ? (
-              awards.map((award) => (
-                <article className="grid gap-5 border-t border-[var(--blanco-roto)]/18 pt-7 sm:grid-cols-[7rem_1fr]" key={award.id}>
-                  <div className="flex h-16 w-16 items-center justify-center border border-[var(--blanco-roto)]/20 text-[var(--azul-grisaceo)]">
-                    <Award className="h-7 w-7" />
-                  </div>
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.22em] text-[var(--gris-suave)]/72">
-                      {award.sourceName ?? formatDate(award.awardedAt)}
-                    </p>
-                    <h3 className="font-display mt-2 text-4xl leading-none">{award.title}</h3>
-                    <RichText className="mt-4 max-w-2xl leading-7 text-[var(--gris-suave)]/82" html={award.description} />
-                    {award.sourceUrl ? (
-                      <a className="mt-5 inline-block text-xs font-semibold uppercase tracking-[0.18em] text-[var(--azul-grisaceo)]" href={award.sourceUrl}>
-                        Fuente
-                      </a>
-                    ) : null}
-                  </div>
-                </article>
-              ))
-            ) : (
-              <EmptyState dark text="Los logros publicados apareceran aqui con un tratamiento sobrio." />
-            )}
-          </div>
+          <AwardsCarousel awards={awards} emptyText="Los logros publicados apareceran aqui con un tratamiento sobrio." />
         </div>
       </MotionSection>
 
@@ -203,7 +178,7 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
             <SectionHeading title="Encuentros para entender el cafe, no solo tomarlo." copy="Catas, lanzamientos de lote y experiencias que hacen visible el oficio." />
           </div>
           <div className="mt-14 border-t border-[var(--linea)]">
-            {events.length ? events.map((event) => <EventRow event={event} key={event.id} />) : <EmptyState text="No hay eventos publicados por el momento." />}
+            <EventsCarousel emptyText="No hay eventos publicados por el momento." events={events} />
           </div>
         </div>
       </MotionSection>
@@ -334,23 +309,6 @@ function SectionHeading({ title, copy, dark = false }: { title: string; copy?: s
         <p className={cn("mt-7 max-w-2xl text-lg leading-8", dark ? "text-[var(--gris-suave)]/82" : "text-[var(--gris-oscuro)]")}>{copy}</p>
       ) : null}
     </div>
-  );
-}
-
-function EventRow({ event }: { event: EventItem }) {
-  return (
-    <article className="grid gap-6 border-b border-[var(--linea)] py-7 lg:grid-cols-[10rem_13rem_1fr] lg:items-start">
-      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--azul-grisaceo)]">
-        <CalendarDays className="mb-3 h-5 w-5" />
-        {formatDate(event.startDate)}
-      </p>
-      <EditorialImage className="aspect-[4/3]" src={event.imageUrl} alt={event.title} />
-      <div>
-        <h3 className="font-display text-4xl leading-none">{event.title}</h3>
-        {event.location ? <p className="mt-3 text-sm uppercase tracking-[0.18em] text-[var(--gris-medio)]">{event.location}</p> : null}
-        <RichText className="mt-5 max-w-3xl leading-7 text-[var(--gris-oscuro)]" html={event.description} />
-      </div>
-    </article>
   );
 }
 
