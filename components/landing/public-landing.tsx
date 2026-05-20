@@ -13,6 +13,7 @@ import type { PublicLandingContent } from "@/app/actions/public-content/types";
 import { BannerCarousel } from "@/components/landing/banner-carousel";
 import { BrandButtonLink } from "@/components/landing/brand-button";
 import { EventsCarousel } from "@/components/landing/events-carousel";
+import { GalleryCarousel } from "@/components/landing/gallery-carousel";
 import { MenuCarousel } from "@/components/landing/menu-carousel";
 import { MotionSection } from "@/components/landing/motion-shell";
 import { SiteHeader } from "@/components/landing/site-header";
@@ -42,7 +43,7 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
   const featuredProduct = products.find((product) => product.isFeatured) ?? products[0];
   const events = content.events;
   const awards = content.awards.filter((award) => award.isPublished !== false);
-  const media = content.media.filter((item) => item.type === "IMAGE" && item.isPublic !== false).slice(0, 8);
+  const media = content.media.filter((item) => item.type === "IMAGE" && item.isPublic !== false);
   const siteName = content.projectConfig.siteName ?? env.NEXT_PUBLIC_SITE_NAME ?? "Cafe de Reyes";
   const address = content.projectConfig.address ?? "Quetzaltenango, Guatemala";
   const hours = content.projectConfig.hours ?? "Horarios publicados desde configuracion del proyecto";
@@ -183,22 +184,11 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
             <SectionLabel number="06" eyebrow="Galeria" />
             <SectionHeading
               title="Barra, producto, proceso y memoria visual."
-              copy="Un grid asimetrico para fotografia real, textura de proceso y contenido social con direccion editorial."
+              copy="Imagenes de la barra abierta, el producto y el oficio que sostienen la experiencia desde Xela."
             />
           </div>
-          <div className="mt-14 grid auto-rows-[11rem] grid-cols-2 gap-3 sm:auto-rows-[15rem] lg:grid-cols-4">
-            {media.length ? (
-              media.map((item, index) => (
-                <EditorialImage
-                  alt="Cafe de Reyes"
-                  className={cn(index === 0 && "col-span-2 row-span-2", index === 3 && "lg:row-span-2", index === 5 && "lg:col-span-2")}
-                  key={item.id}
-                  src={item.value}
-                />
-              ))
-            ) : (
-              <EmptyState text="La galeria publica del CMS aparecera aqui." />
-            )}
+          <div className="mt-14">
+            <GalleryCarousel emptyText="La galeria publica del CMS aparecera aqui." media={media} />
           </div>
         </div>
       </MotionSection>
@@ -314,14 +304,6 @@ function EditorialImage({ src, alt, className }: { src?: string | null; alt: str
       ) : (
         <div className="flex h-full min-h-32 items-center justify-center text-xs uppercase tracking-[0.2em] text-[var(--gris-medio)]">Sin imagen</div>
       )}
-    </div>
-  );
-}
-
-function EmptyState({ text, dark = false }: { text: string; dark?: boolean }) {
-  return (
-    <div className={cn("border border-dashed p-6 text-sm", dark ? "border-[var(--blanco-roto)]/20 text-[var(--gris-suave)]" : "border-[var(--linea)] text-[var(--gris-medio)]")}>
-      {text}
     </div>
   );
 }
