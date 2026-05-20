@@ -1,13 +1,6 @@
-import {
-  AtSign,
-  Camera,
-  Clock,
-  Compass,
-  MapPin,
-  Navigation,
-  Sprout,
-} from "lucide-react";
+import { Sprout } from "lucide-react";
 import Image from "next/image";
+import type { ReactNode } from "react";
 
 import type { PublicLandingContent } from "@/app/actions/public-content/types";
 import { BannerCarousel } from "@/components/landing/banner-carousel";
@@ -46,9 +39,11 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
   const media = content.media.filter((item) => item.type === "IMAGE" && item.isPublic !== false);
   const siteName = content.projectConfig.siteName ?? env.NEXT_PUBLIC_SITE_NAME ?? "Cafe de Reyes";
   const address = content.projectConfig.address ?? "Quetzaltenango, Guatemala";
-  const hours = content.projectConfig.hours ?? "Horarios publicados desde configuracion del proyecto";
+  const hours = content.projectConfig.hours ?? "Lunes - Domingo\n7:00 AM - 7:00 PM";
   const mapUrl = content.projectConfig.mapUrl ?? "https://maps.google.com/?q=Quetzaltenango%20Guatemala";
   const instagramUrl = content.projectConfig.instagramUrl ?? "https://www.instagram.com/";
+  const instagramHandle = getInstagramHandle(instagramUrl) ?? "@cafedereyes";
+  const whatsAppUrl = getWhatsAppUrl(content.projectConfig.phone);
   const originImage = media[1]?.value ?? featuredProduct?.imageUrl;
   const locationImage = media[2]?.value ?? media[0]?.value;
 
@@ -193,82 +188,135 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
         </div>
       </MotionSection>
 
-      <MotionSection className="px-5 py-20 sm:px-8 lg:px-12 lg:py-28" id="visitanos">
-        <div className="mx-auto grid max-w-[1480px] gap-12 lg:grid-cols-[0.78fr_1fr]">
-          <div>
-            <SectionLabel number="07" eyebrow="Visitanos" />
-            <h2 className="font-display mt-10 text-balance text-5xl leading-none sm:text-7xl">
-              Desde Xela, una barra que vale el viaje.
-            </h2>
-            <div className="mt-10 space-y-4 text-[var(--gris-oscuro)]">
-              <p className="flex items-center gap-3">
-                <MapPin className="h-5 w-5 text-[var(--azul-grisaceo)]" />
-                {address}
-              </p>
-              <p className="flex items-center gap-3">
-                <Clock className="h-5 w-5 text-[var(--azul-grisaceo)]" />
-                {hours}
-              </p>
-              <a className="flex items-center gap-3 transition hover:text-[var(--negro-profundo)]" href={instagramUrl}>
-                <AtSign className="h-5 w-5 text-[var(--azul-grisaceo)]" />
-                Instagram como bitacora visual de la barra
-              </a>
+      <section id="visitanos" className="bg-[var(--blanco-roto)] text-[var(--negro-profundo)]">
+        <div className="mx-auto grid max-w-[1680px] lg:grid-cols-[55fr_45fr]">
+          <div className="px-5 pb-20 pt-24 sm:px-8 lg:px-16 lg:pb-24 lg:pt-28 xl:px-20">
+            <div className="flex items-center gap-5 text-xs font-semibold uppercase tracking-[0.26em] text-[var(--gris-oscuro)]">
+              <span>Visitanos</span>
+              <span className="h-px w-20 bg-[var(--gris-medio)]/45" />
             </div>
-            <BrandButtonLink className="mt-9" href={mapUrl} target="_blank">
-              Como llegar
-              <Navigation className="h-4 w-4" />
-            </BrandButtonLink>
+
+            <h2 className="font-display mt-9 max-w-4xl text-balance text-5xl leading-[0.92] sm:text-7xl lg:text-[5.8rem]">
+              Desde Xela,<br />
+              una barra que<br />
+              vale el viaje.
+            </h2>
+
+            <p className="mt-8 max-w-xl whitespace-pre-line text-base leading-8 text-[var(--gris-oscuro)]">
+              Cafe de Reyes nacio en Quetzaltenango.{"\n\n"}
+              Un espacio donde el origen, la tecnica y la hospitalidad se encuentran en una barra abierta para descubrir.
+            </p>
+
+            <div className="mt-10 grid gap-7 border-y border-[var(--linea)] py-7 sm:grid-cols-3">
+              <VisitMeta label="Quetzaltenango" value="Guatemala" />
+              <VisitMeta label="Horario" value={hours} />
+              <VisitMeta label="Instagram" value={instagramHandle} />
+            </div>
+
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+              <BrandButtonLink
+                className="w-full sm:w-auto"
+                href={mapUrl}
+                style={{
+                  backgroundColor: "var(--negro-profundo)",
+                  borderColor: "var(--negro-profundo)",
+                  color: "var(--blanco-roto)",
+                }}
+                target="_blank"
+              >
+                Como llegar
+              </BrandButtonLink>
+              <BrandButtonLink className="w-full sm:w-auto" href={instagramUrl} target="_blank" variant="secondary">
+                Ver Instagram
+              </BrandButtonLink>
+            </div>
+
+            <p className="font-display mt-7 max-w-xl text-xl italic leading-snug text-[var(--gris-medio)]">
+              Una barra construida para quienes buscan cafe con identidad.
+            </p>
           </div>
-          <div className="grid gap-3 sm:grid-cols-[1fr_0.72fr]">
-            <EditorialImage className="min-h-[28rem]" src={locationImage} alt="Cafe de Reyes en Quetzaltenango" />
-            <div className="relative min-h-[28rem] overflow-hidden bg-[var(--negro-profundo)] p-6 text-[var(--blanco-roto)]">
-              <div className="absolute inset-0 opacity-[0.18] [background-image:linear-gradient(rgba(249,246,242,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(249,246,242,0.5)_1px,transparent_1px)] [background-size:44px_44px]" />
-              <div className="relative flex h-full min-h-[25rem] flex-col justify-between border border-[var(--blanco-roto)]/18 p-6">
-                <p className="text-xs uppercase tracking-[0.24em] text-[var(--azul-grisaceo)]">Mapa sobrio</p>
-                <div>
-                  <p className="font-display text-6xl leading-none">Xela</p>
-                  <p className="mt-4 max-w-sm leading-7 text-[var(--gris-suave)]">
-                    Punto de partida para una experiencia de origen, tecnica y hospitalidad.
-                  </p>
+
+          <div className="relative min-h-[30rem] border-t border-[var(--linea)] lg:min-h-full lg:border-l lg:border-t-0">
+            <EditorialImage className="h-full min-h-[30rem]" src={locationImage} alt="Cafe de Reyes en Quetzaltenango" />
+            <div className="absolute right-6 top-6 border border-[var(--blanco-roto)]/18 bg-[var(--negro-profundo)]/78 p-6 text-[var(--blanco-roto)] backdrop-blur-sm sm:right-10 sm:top-10 sm:p-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[var(--blanco-roto)]">Xela</p>
+              <p className="mt-5 max-w-[12rem] text-lg leading-7 text-[var(--gris-suave)]">
+                Quetzaltenango, Guatemala
+              </p>
+              <div className="mt-6 h-px w-16 bg-[var(--azul-grisaceo)]/80" />
+            </div>
+          </div>
+        </div>
+
+        <footer className="bg-[var(--negro-profundo)] px-5 py-12 text-[var(--blanco-roto)] sm:px-8 lg:px-12 lg:py-14">
+          <div className="mx-auto max-w-[1480px]">
+            <div className="grid gap-10 md:grid-cols-[1.15fr_0.85fr_1fr]">
+              <div>
+                <Image
+                  alt={siteName}
+                  className="h-auto w-60 object-contain"
+                  height={384}
+                  src="/brand/reyes-logo-full-white-transparent.png"
+                  width={570}
+                />
+                <p className="font-display mt-6 max-w-sm text-2xl italic leading-tight text-[var(--gris-suave)]">
+                  Origen, tecnica y memoria en cada taza.
+                </p>
+                <div className="mt-5 h-px w-16 bg-[var(--azul-grisaceo)]/80" />
+                <p className="mt-5 text-sm leading-7 text-[var(--gris-suave)]/76">
+                  Desde Quetzaltenango, Guatemala.
+                </p>
+              </div>
+
+              <nav className="text-sm">
+                <p className="mb-6 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--azul-grisaceo)]">
+                  Explorar
+                </p>
+                <div className="grid gap-3 text-[var(--gris-suave)]/86">
+                  <FooterLink href="#menu">Menu</FooterLink>
+                  <FooterLink href="#origen">Origen</FooterLink>
+                  <FooterLink href="#eventos">Eventos</FooterLink>
+                  <FooterLink href="#reconocimientos">Reconocimientos</FooterLink>
+                  <FooterLink href="#galeria">Galeria</FooterLink>
+                  <FooterLink href="#visitanos">Visitanos</FooterLink>
                 </div>
-                <Compass className="h-8 w-8 text-[var(--azul-grisaceo)]" />
+              </nav>
+
+              <div className="text-sm leading-7 text-[var(--gris-suave)]/82">
+                <p className="mb-6 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--azul-grisaceo)]">
+                  Contacto
+                </p>
+                <p>{address}</p>
+                <div className="mt-5 whitespace-pre-line">{hours}</div>
+                <div className="mt-7 h-px w-40 bg-[var(--azul-grisaceo)]/70" />
+                <div className="mt-6 grid gap-3">
+                  <FooterLink href={instagramUrl} target="_blank">
+                    Instagram {instagramHandle}
+                  </FooterLink>
+                  {whatsAppUrl ? (
+                    <FooterLink href={whatsAppUrl} target="_blank">
+                      WhatsApp {content.projectConfig.phone}
+                    </FooterLink>
+                  ) : null}
+                  <FooterLink href={mapUrl} target="_blank">
+                    Como llegar
+                  </FooterLink>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-12 grid gap-5 border-t border-[var(--blanco-roto)]/12 pt-6 text-center text-sm text-[var(--gris-suave)]/70 md:grid-cols-[1fr_auto_1fr] md:items-center">
+              <span className="hidden md:block" />
+              <p>© 2026 Cafe de Reyes. Todos los derechos reservados.</p>
+              <div className="flex justify-center md:justify-end">
+                <FooterLink href={instagramUrl} target="_blank">
+                  Instagram -&gt;
+                </FooterLink>
               </div>
             </div>
           </div>
-        </div>
-      </MotionSection>
-
-      <footer className="bg-[var(--negro-profundo)] px-5 py-14 text-[var(--blanco-roto)] sm:px-8 lg:px-12">
-        <div className="mx-auto grid max-w-[1480px] gap-10 md:grid-cols-[1fr_1fr_0.8fr]">
-          <div>
-            <Image
-              alt={siteName}
-              className="h-auto w-56 object-contain"
-              height={384}
-              src="/brand/reyes-logo-full-white-transparent.png"
-              width={570}
-            />
-            <p className="mt-4 max-w-md text-sm leading-6 text-[var(--gris-suave)]">
-              Origen, tecnica y memoria en cada taza.
-            </p>
-          </div>
-          <nav className="grid gap-3 text-sm text-[var(--gris-suave)] sm:grid-cols-2">
-            <a href="#menu">Menu</a>
-            <a href="#origen">Origen</a>
-            <a href="#eventos">Eventos</a>
-            <a href="#reconocimientos">Reconocimientos</a>
-            <a href="#galeria">Galeria</a>
-            <a href="#visitanos">Visitanos</a>
-          </nav>
-          <div className="text-sm leading-7 text-[var(--gris-suave)] md:text-right">
-            <p>{address}</p>
-            <p>{hours}</p>
-            <a className="inline-flex items-center gap-2 text-[var(--azul-grisaceo)]" href={instagramUrl}>
-              Instagram <Camera className="h-4 w-4" />
-            </a>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      </section>
     </main>
   );
 }
@@ -296,6 +344,36 @@ function SectionHeading({ title, copy, dark = false }: { title: string; copy?: s
   );
 }
 
+function VisitMeta({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--negro-profundo)]">{label}</p>
+      <p className="mt-3 whitespace-pre-line text-sm leading-6 text-[var(--gris-oscuro)]">{value}</p>
+    </div>
+  );
+}
+
+function FooterLink({
+  children,
+  href,
+  target,
+}: {
+  children: ReactNode;
+  href: string;
+  target?: string;
+}) {
+  return (
+    <a
+      className="w-fit text-[var(--gris-suave)]/82 transition hover:text-[var(--blanco-roto)]"
+      href={href}
+      rel={target === "_blank" ? "noreferrer" : undefined}
+      target={target}
+    >
+      {children}
+    </a>
+  );
+}
+
 function EditorialImage({ src, alt, className }: { src?: string | null; alt: string; className?: string }) {
   return (
     <div className={cn("group relative overflow-hidden bg-[var(--gris-suave)]", className)}>
@@ -306,4 +384,25 @@ function EditorialImage({ src, alt, className }: { src?: string | null; alt: str
       )}
     </div>
   );
+}
+
+function getInstagramHandle(url: string) {
+  try {
+    const parsedUrl = new URL(url);
+    const handle = parsedUrl.pathname.split("/").filter(Boolean)[0];
+
+    return handle ? `@${handle}` : null;
+  } catch {
+    return null;
+  }
+}
+
+function getWhatsAppUrl(phone?: string | null) {
+  if (!phone) {
+    return null;
+  }
+
+  const digits = phone.replace(/\D/g, "");
+
+  return digits ? `https://wa.me/${digits}` : null;
 }
