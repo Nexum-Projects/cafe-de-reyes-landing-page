@@ -42,9 +42,7 @@ export function EventsCarousel({ events, emptyText }: EventsCarouselProps) {
   const safePageIndex = pages.length === 0 ? 0 : pageIndex % pages.length;
   const page = pages[safePageIndex] ?? [];
   const hasManyPages = pages.length > 1;
-  const resolvedEmptyText = activeQuery
-    ? `No hay eventos para "${activeQuery}".`
-    : emptyText;
+  const resolvedEmptyText = activeQuery ? "No se encuentran resultados para la busqueda." : emptyText;
 
   const fetchEvents = useCallback((nextOrder: EventOrder, nextQuery: string) => {
     const normalizedQuery = nextQuery.trim();
@@ -58,14 +56,13 @@ export function EventsCarousel({ events, emptyText }: EventsCarouselProps) {
 
     startTransition(async () => {
       const response = await getPublicEvents(nextOrder, normalizedQuery);
-      const publishedEvents = filterPublishedEvents(response.data);
       const fallbackEvents = filterEventsByQuery(sortEvents(events, nextOrder), normalizedQuery);
 
       if (requestId !== requestIdRef.current) {
         return;
       }
 
-      setVisibleEvents(response.error ? fallbackEvents : publishedEvents);
+      setVisibleEvents(response.error ? fallbackEvents : response.data);
       setFilterError(response.error ?? null);
     });
   }, [events]);
@@ -195,14 +192,9 @@ export function EventsCarousel({ events, emptyText }: EventsCarouselProps) {
         </div>
       </div>
 
-      {activeQuery || filterError ? (
+      {filterError ? (
         <div className="mb-3 min-h-5">
-          {activeQuery ? (
-            <p className="text-xs uppercase tracking-[0.16em] text-[var(--gris-medio)]">
-              Busqueda: {activeQuery}
-            </p>
-          ) : null}
-          {filterError ? <p className="mt-2 text-sm text-[var(--gris-medio)]">{filterError}</p> : null}
+          <p className="text-sm text-[var(--gris-medio)]">{filterError}</p>
         </div>
       ) : null}
 
@@ -283,7 +275,13 @@ function EventImage({ src, alt, className }: { src?: string | null; alt: string;
 }
 
 function EmptyState({ text }: { text: string }) {
-  return <div className="border border-dashed border-[var(--linea)] p-6 text-sm text-[var(--gris-medio)]">{text}</div>;
+  return (
+    <div className="flex justify-center py-12 text-center">
+      <p className="max-w-xl text-sm leading-7 text-[var(--gris-medio)]">
+        {text}
+      </p>
+    </div>
+  );
 }
 
 function chunkItems<T>(items: T[], size: number) {
@@ -294,12 +292,6 @@ function chunkItems<T>(items: T[], size: number) {
   }
 
   return chunks;
-}
-
-function filterPublishedEvents(events: EventItem[]) {
-  return events.filter(
-    (event) => event.isActive !== false && event.isPublished !== false && event.status !== "CANCELLED",
-  );
 }
 
 function sortEvents(events: EventItem[], order: EventOrder) {

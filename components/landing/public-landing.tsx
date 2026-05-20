@@ -41,9 +41,7 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
   const productsByType = groupMenuProductsByType(products);
   const menuCategories = getMenuCategoriesWithProducts(productsByType);
   const featuredProduct = products.find((product) => product.isFeatured) ?? products[0];
-  const events = content.events.filter(
-    (event) => event.isActive !== false && event.isPublished !== false && event.status !== "CANCELLED",
-  );
+  const events = content.events;
   const awards = content.awards.filter((award) => award.isPublished !== false);
   const media = content.media.filter((item) => item.type === "IMAGE" && item.isPublic !== false).slice(0, 8);
   const siteName = content.projectConfig.siteName ?? env.NEXT_PUBLIC_SITE_NAME ?? "Cafe de Reyes";
