@@ -3,6 +3,7 @@
 import { env } from "@/utils/env";
 
 import type {
+  ActionButton,
   Award,
   AwardOrder,
   Banner,
@@ -12,12 +13,22 @@ import type {
   MediaItem,
   MenuProduct,
   MenuProductType,
+  OpeningHour,
   ProjectConfig,
+  ProjectLocation,
   PublicLandingContent,
   SingleDataResponse,
 } from "./types";
 
-type PublicResource = "banners" | "menu-products" | "events" | "awards" | "media";
+type PublicResource =
+  | "banners"
+  | "menu-products"
+  | "events"
+  | "awards"
+  | "media"
+  | "opening-hours"
+  | "action-buttons"
+  | "locations";
 
 function buildUrl(path: string, params?: Record<string, string | number | boolean>) {
   const url = new URL(`${env.NEXT_PUBLIC_API_URL}${path}`);
@@ -51,6 +62,10 @@ function getPublicListOrder(resource: PublicResource): { orderBy: string; order:
 
   if (resource === "awards") {
     return { orderBy: "awardedAt", order: "DESC" };
+  }
+
+  if (resource === "opening-hours") {
+    return { orderBy: "day", order: "ASC" };
   }
 
   return { orderBy: "sortOrder", order: "ASC" };
@@ -96,6 +111,18 @@ function sortFallbackEvents(events: EventItem[], order: EventOrder) {
   });
 }
 
+function getEventLocationLabel(location: EventItem["location"]) {
+  if (!location) {
+    return null;
+  }
+
+  if (typeof location === "string") {
+    return location;
+  }
+
+  return location.fullAddress ?? null;
+}
+
 function filterFallbackEventsByQuery(events: EventItem[], query: string) {
   const normalizedQuery = query.trim().toLowerCase();
 
@@ -104,7 +131,7 @@ function filterFallbackEventsByQuery(events: EventItem[], query: string) {
   }
 
   return events.filter((event) =>
-    [event.title, event.description, event.location]
+    [event.title, event.description, getEventLocationLabel(event.location)]
       .filter(Boolean)
       .some((value) => String(value).toLowerCase().includes(normalizedQuery)),
   );
@@ -287,12 +314,15 @@ export async function getPublicLandingContent(projectId = env.NEXT_PUBLIC_PROJEC
   }
 
   try {
-    const [banners, products, events, awards, media, projectConfig] = await Promise.all([
+    const [banners, products, events, awards, media, openingHours, actionButtons, locations, projectConfig] = await Promise.all([
       fetchPublicList<Banner>(projectId, "banners"),
       fetchPublicList<MenuProduct>(projectId, "menu-products"),
       fetchPublicList<EventItem>(projectId, "events"),
       fetchPublicList<Award>(projectId, "awards"),
       fetchPublicList<MediaItem>(projectId, "media", { isPublic: true }),
+      fetchPublicList<OpeningHour>(projectId, "opening-hours", { isPublished: true }),
+      fetchPublicList<ActionButton>(projectId, "action-buttons", { isPublished: true }),
+      fetchPublicList<ProjectLocation>(projectId, "locations", { isPublished: true }),
       fetchProjectConfig(projectId),
     ]);
 
@@ -303,6 +333,9 @@ export async function getPublicLandingContent(projectId = env.NEXT_PUBLIC_PROJEC
         events,
         awards,
         media,
+        openingHours,
+        actionButtons,
+        locations,
         projectConfig,
       },
     };
@@ -446,8 +479,25 @@ const fallbackContent: PublicLandingContent = {
       isPublic: true,
     },
   ],
+  openingHours: [],
+  actionButtons: [],
+  locations: [
+    {
+      id: "location-1",
+      title: "Barra de Xela",
+      description: "La barra abierta donde origen, tecnica y hospitalidad se encuentran.",
+      fullAddress: "Quetzaltenango, Guatemala",
+      imageUrl:
+        "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1200&q=88",
+      isActive: true,
+      isPublished: true,
+      latitude: 14.8451374,
+      longitude: -91.5173042,
+      sortOrder: 0,
+    },
+  ],
   projectConfig: {
-    address: "Quetzaltenango, Guatemala",
+    address: "Guatemala, Quetzaltenango, Quetzaltenango",
     hours: "Horarios publicados desde configuracion del proyecto",
     instagramUrl: "https://www.instagram.com/",
     mapUrl: "https://maps.google.com/?q=Quetzaltenango%20Guatemala",

@@ -1,12 +1,22 @@
-import { Sprout } from "lucide-react";
+import { Mail, MapPinned, Sprout } from "lucide-react";
 import Image from "next/image";
 import type { ReactNode } from "react";
+import { FaFacebookF, FaInstagram, FaUber, FaWhatsapp } from "react-icons/fa";
+import { SiWaze } from "react-icons/si";
 
-import type { PublicLandingContent } from "@/app/actions/public-content/types";
+import type {
+  ActionButton,
+  ActionButtonType,
+  OpeningHour,
+  ProjectLocation,
+  PublicLandingContent,
+  WeekDay,
+} from "@/app/actions/public-content/types";
 import { BannerCarousel } from "@/components/landing/banner-carousel";
 import { BrandButtonLink } from "@/components/landing/brand-button";
 import { EventsCarousel } from "@/components/landing/events-carousel";
 import { GalleryCarousel } from "@/components/landing/gallery-carousel";
+import { LocationsCarousel } from "@/components/landing/locations-carousel";
 import { MenuCarousel } from "@/components/landing/menu-carousel";
 import { MotionSection } from "@/components/landing/motion-shell";
 import { SiteHeader } from "@/components/landing/site-header";
@@ -29,6 +39,21 @@ const traceability = [
   ["Finca", "Lotes con nombre propio"],
 ];
 
+type VisitAction = {
+  id: string;
+  type: ActionButtonType;
+  label: string;
+  href: string;
+  sortOrder: number;
+  target?: "_self" | "_blank";
+};
+
+const primaryVisitButtonStyle = {
+  backgroundColor: "var(--negro-profundo)",
+  borderColor: "var(--negro-profundo)",
+  color: "var(--blanco-roto)",
+};
+
 export function PublicLanding({ content, warning }: PublicLandingProps) {
   const products = content.products.filter((product) => product.isPublished !== false);
   const productsByType = groupMenuProductsByType(products);
@@ -37,13 +62,12 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
   const events = content.events;
   const awards = content.awards.filter((award) => award.isPublished !== false);
   const media = content.media.filter((item) => item.type === "IMAGE" && item.isPublic !== false);
+  const locations = getPublishedLocations(content.locations ?? []);
+  const primaryLocation = locations[0];
   const siteName = content.projectConfig.siteName ?? env.NEXT_PUBLIC_SITE_NAME ?? "Cafe de Reyes";
-  const address = content.projectConfig.address ?? "Quetzaltenango, Guatemala";
-  const hours = content.projectConfig.hours ?? "Lunes - Domingo\n7:00 AM - 7:00 PM";
-  const mapUrl = content.projectConfig.mapUrl ?? "https://maps.google.com/?q=Quetzaltenango%20Guatemala";
-  const instagramUrl = content.projectConfig.instagramUrl ?? "https://www.instagram.com/";
-  const instagramHandle = getInstagramHandle(instagramUrl) ?? "@cafedereyes";
-  const whatsAppUrl = getWhatsAppUrl(content.projectConfig.phone);
+  const address = primaryLocation?.fullAddress ?? content.projectConfig.address ?? "Guatemala, Quetzaltenango, Quetzaltenango";
+  const visitActions = getVisitActions(content.actionButtons).slice(0, 3);
+  const openingHourCards = getOpeningHourCards(content.openingHours);
   const originImage = media[1]?.value ?? featuredProduct?.imageUrl;
   const locationImage = media[2]?.value ?? media[0]?.value;
 
@@ -207,51 +231,52 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
               Un espacio donde el origen, la tecnica y la hospitalidad se encuentran en una barra abierta para descubrir.
             </p>
 
-            <div className="mt-10 grid gap-7 border-y border-[var(--linea)] py-7 sm:grid-cols-3">
-              <VisitMeta label="Quetzaltenango" value="Guatemala" />
-              <VisitMeta label="Horario" value={hours} />
-              <VisitMeta label="Instagram" value={instagramHandle} />
-            </div>
+            {openingHourCards.length ? (
+              <div className="mt-10">
+                <SectionMicroHeading label="Horarios" />
+                <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+                  {openingHourCards.map((hour) => (
+                    <OpeningHourCard close={hour.close} day={hour.day} key={hour.day} open={hour.open} />
+                  ))}
+                </div>
+              </div>
+            ) : null}
 
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <BrandButtonLink
-                className="w-full sm:w-auto"
-                href={mapUrl}
-                style={{
-                  backgroundColor: "var(--negro-profundo)",
-                  borderColor: "var(--negro-profundo)",
-                  color: "var(--blanco-roto)",
-                }}
-                target="_blank"
-              >
-                Como llegar
-              </BrandButtonLink>
-              <BrandButtonLink className="w-full sm:w-auto" href={instagramUrl} target="_blank" variant="secondary">
-                Ver Instagram
-              </BrandButtonLink>
-            </div>
-
-            <p className="font-display mt-7 max-w-xl text-xl italic leading-snug text-[var(--gris-medio)]">
-              Una barra construida para quienes buscan cafe con identidad.
-            </p>
+            {visitActions.length ? (
+              <div className="mt-9">
+                <SectionMicroHeading label="Siguenos" />
+                <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+                  {visitActions.map((action, index) => (
+                    <BrandButtonLink
+                      className={cn(
+                        "w-full sm:w-auto",
+                        index === 0 &&
+                          "[--button-bg:var(--negro-profundo)] [--button-border:var(--negro-profundo)] [--button-fg:var(--blanco-roto)]",
+                      )}
+                      href={action.href}
+                      key={action.id}
+                      style={index === 0 ? primaryVisitButtonStyle : undefined}
+                      target={action.target}
+                      variant={index === 0 ? "primary" : "secondary"}
+                    >
+                      <ActionButtonIcon type={action.type} />
+                      {action.label}
+                    </BrandButtonLink>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </div>
 
-          <div className="relative min-h-[30rem] border-t border-[var(--linea)] lg:min-h-full lg:border-l lg:border-t-0">
-            <EditorialImage className="h-full min-h-[30rem]" src={locationImage} alt="Cafe de Reyes en Quetzaltenango" />
-            <div className="absolute right-6 top-6 border border-[var(--blanco-roto)]/18 bg-[var(--negro-profundo)]/78 p-6 text-[var(--blanco-roto)] backdrop-blur-sm sm:right-10 sm:top-10 sm:p-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[var(--blanco-roto)]">Xela</p>
-              <p className="mt-5 max-w-[12rem] text-lg leading-7 text-[var(--gris-suave)]">
-                Quetzaltenango, Guatemala
-              </p>
-              <div className="mt-6 h-px w-16 bg-[var(--azul-grisaceo)]/80" />
-            </div>
+          <div className="min-h-[30rem] border-t border-[var(--linea)] lg:min-h-full lg:border-l lg:border-t-0">
+            <LocationsCarousel fallbackAddress={address} fallbackImage={locationImage} locations={locations} />
           </div>
         </div>
 
         <footer className="bg-[var(--negro-profundo)] px-5 py-12 text-[var(--blanco-roto)] sm:px-8 lg:px-12 lg:py-14">
           <div className="mx-auto max-w-[1480px]">
-            <div className="grid gap-10 md:grid-cols-[1.15fr_0.85fr_1fr]">
-              <div>
+            <div className="grid gap-10 text-center md:grid-cols-2 md:items-center">
+              <div className="flex justify-center">
                 <Image
                   alt={siteName}
                   className="h-auto w-60 object-contain"
@@ -259,20 +284,13 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
                   src="/brand/reyes-logo-full-white-transparent.png"
                   width={570}
                 />
-                <p className="font-display mt-6 max-w-sm text-2xl italic leading-tight text-[var(--gris-suave)]">
-                  Origen, tecnica y memoria en cada taza.
-                </p>
-                <div className="mt-5 h-px w-16 bg-[var(--azul-grisaceo)]/80" />
-                <p className="mt-5 text-sm leading-7 text-[var(--gris-suave)]/76">
-                  Desde Quetzaltenango, Guatemala.
-                </p>
               </div>
 
               <nav className="text-sm">
                 <p className="mb-6 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--azul-grisaceo)]">
                   Explorar
                 </p>
-                <div className="grid gap-3 text-[var(--gris-suave)]/86">
+                <div className="grid justify-center gap-3 text-[var(--gris-suave)]/86">
                   <FooterLink href="#menu">Menu</FooterLink>
                   <FooterLink href="#origen">Origen</FooterLink>
                   <FooterLink href="#eventos">Eventos</FooterLink>
@@ -282,37 +300,10 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
                 </div>
               </nav>
 
-              <div className="text-sm leading-7 text-[var(--gris-suave)]/82">
-                <p className="mb-6 text-xs font-semibold uppercase tracking-[0.24em] text-[var(--azul-grisaceo)]">
-                  Contacto
-                </p>
-                <p>{address}</p>
-                <div className="mt-5 whitespace-pre-line">{hours}</div>
-                <div className="mt-7 h-px w-40 bg-[var(--azul-grisaceo)]/70" />
-                <div className="mt-6 grid gap-3">
-                  <FooterLink href={instagramUrl} target="_blank">
-                    Instagram {instagramHandle}
-                  </FooterLink>
-                  {whatsAppUrl ? (
-                    <FooterLink href={whatsAppUrl} target="_blank">
-                      WhatsApp {content.projectConfig.phone}
-                    </FooterLink>
-                  ) : null}
-                  <FooterLink href={mapUrl} target="_blank">
-                    Como llegar
-                  </FooterLink>
-                </div>
-              </div>
             </div>
 
-            <div className="mt-12 grid gap-5 border-t border-[var(--blanco-roto)]/12 pt-6 text-center text-sm text-[var(--gris-suave)]/70 md:grid-cols-[1fr_auto_1fr] md:items-center">
-              <span className="hidden md:block" />
+            <div className="mt-12 border-t border-[var(--blanco-roto)]/12 pt-6 text-center text-sm text-[var(--gris-suave)]/70">
               <p>© 2026 Cafe de Reyes. Todos los derechos reservados.</p>
-              <div className="flex justify-center md:justify-end">
-                <FooterLink href={instagramUrl} target="_blank">
-                  Instagram -&gt;
-                </FooterLink>
-              </div>
             </div>
           </div>
         </footer>
@@ -344,11 +335,21 @@ function SectionHeading({ title, copy, dark = false }: { title: string; copy?: s
   );
 }
 
-function VisitMeta({ label, value }: { label: string; value: string }) {
+function SectionMicroHeading({ label }: { label: string }) {
   return (
-    <div>
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--negro-profundo)]">{label}</p>
-      <p className="mt-3 whitespace-pre-line text-sm leading-6 text-[var(--gris-oscuro)]">{value}</p>
+    <div className="flex items-center gap-5">
+      <p className="text-xs font-semibold uppercase tracking-[0.26em] text-[var(--negro-profundo)]">{label}</p>
+      <span className="h-px flex-1 bg-[var(--linea)]" />
+    </div>
+  );
+}
+
+function OpeningHourCard({ day, open, close }: { day: string; open: string; close: string }) {
+  return (
+    <div className="border-l border-[var(--linea)] pl-3 text-sm">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--negro-profundo)]">{day}</p>
+      <p className="mt-4 text-[var(--gris-oscuro)]">{open}</p>
+      <p className="mt-1 text-[var(--gris-oscuro)]">{close}</p>
     </div>
   );
 }
@@ -357,14 +358,16 @@ function FooterLink({
   children,
   href,
   target,
+  className,
 }: {
   children: ReactNode;
   href: string;
   target?: string;
+  className?: string;
 }) {
   return (
     <a
-      className="w-fit text-[var(--gris-suave)]/82 transition hover:text-[var(--blanco-roto)]"
+      className={cn("w-fit text-[var(--gris-suave)]/82 transition hover:text-[var(--blanco-roto)]", className)}
       href={href}
       rel={target === "_blank" ? "noreferrer" : undefined}
       target={target}
@@ -372,6 +375,36 @@ function FooterLink({
       {children}
     </a>
   );
+}
+
+function ActionButtonIcon({ type }: { type: ActionButtonType }) {
+  const className = "h-4 w-4";
+
+  if (type === "INSTAGRAM") {
+    return <FaInstagram className={className} />;
+  }
+
+  if (type === "FACEBOOK") {
+    return <FaFacebookF className={className} />;
+  }
+
+  if (type === "EMAIL") {
+    return <Mail className={className} />;
+  }
+
+  if (type === "UBER") {
+    return <FaUber className={className} />;
+  }
+
+  if (type === "WHATSAPP") {
+    return <FaWhatsapp className={className} />;
+  }
+
+  if (type === "WAZE") {
+    return <SiWaze className={className} />;
+  }
+
+  return <MapPinned className={className} />;
 }
 
 function EditorialImage({ src, alt, className }: { src?: string | null; alt: string; className?: string }) {
@@ -386,23 +419,111 @@ function EditorialImage({ src, alt, className }: { src?: string | null; alt: str
   );
 }
 
-function getInstagramHandle(url: string) {
-  try {
-    const parsedUrl = new URL(url);
-    const handle = parsedUrl.pathname.split("/").filter(Boolean)[0];
-
-    return handle ? `@${handle}` : null;
-  } catch {
-    return null;
-  }
+function getPublishedLocations(locations: ProjectLocation[]) {
+  return locations
+    .filter((location) => location.isActive !== false && location.isPublished !== false)
+    .sort((first, second) => (first.sortOrder ?? 0) - (second.sortOrder ?? 0));
 }
 
-function getWhatsAppUrl(phone?: string | null) {
-  if (!phone) {
-    return null;
+function getVisitActions(actionButtons: ActionButton[]): VisitAction[] {
+  const publishedActions = actionButtons
+    .filter((action) => action.isActive !== false && action.isPublished !== false && (action.url || action.value))
+    .sort((first, second) => (first.sortOrder ?? 0) - (second.sortOrder ?? 0));
+
+  return publishedActions.reduce<VisitAction[]>((actions, action) => {
+      const value = action.url ?? action.value;
+      const href = getActionHref(action.type, value);
+
+      if (!href) {
+        return actions;
+      }
+
+      actions.push({
+        id: action.id,
+        type: action.type,
+        label: action.label ?? getActionLabel(action.type),
+        href,
+        sortOrder: action.sortOrder ?? 0,
+        target: action.target ?? "_blank",
+      });
+
+      return actions;
+  }, []);
+}
+
+function getActionHref(type: ActionButtonType, value: string) {
+  if (type === "EMAIL") {
+    return value.startsWith("mailto:") ? value : `mailto:${value}`;
   }
 
-  const digits = phone.replace(/\D/g, "");
+  if (type === "WHATSAPP") {
+    if (value.startsWith("http")) {
+      return value;
+    }
 
-  return digits ? `https://wa.me/${digits}` : null;
+    const digits = value.replace(/\D/g, "");
+
+    return digits ? `https://wa.me/${digits}` : value;
+  }
+
+  return value;
+}
+
+function getActionLabel(type: ActionButtonType) {
+  const labels: Record<ActionButtonType, string> = {
+    EMAIL: "Escribir",
+    FACEBOOK: "Ver Facebook",
+    INSTAGRAM: "Ver Instagram",
+    UBER: "Uber",
+    WAZE: "Como llegar",
+    WHATSAPP: "WhatsApp",
+  };
+
+  return labels[type];
+}
+
+function getOpeningHourCards(openingHours: OpeningHour[]) {
+  return openingHours
+    .filter((hour) => hour.isActive !== false && hour.isPublished !== false)
+    .sort((first, second) => getWeekDayIndex(first.day) - getWeekDayIndex(second.day))
+    .map((hour) => ({
+      close: formatTime(hour.endTime),
+      day: getWeekDayShortLabel(hour.day),
+      open: formatTime(hour.startTime),
+    }));
+}
+
+function getWeekDayIndex(day: WeekDay) {
+  return WEEK_DAYS.indexOf(day);
+}
+
+const WEEK_DAYS: WeekDay[] = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+
+function getWeekDayShortLabel(day: WeekDay) {
+  const labels: Record<WeekDay, string> = {
+    FRIDAY: "Vie",
+    MONDAY: "Lun",
+    SATURDAY: "Sab",
+    SUNDAY: "Dom",
+    THURSDAY: "Jue",
+    TUESDAY: "Mar",
+    WEDNESDAY: "Mie",
+  };
+
+  return labels[day];
+}
+
+function formatTime(value: string) {
+  const [hourValue, minuteValue] = value.split(":");
+  const hour = Number(hourValue);
+  const minute = Number(minuteValue);
+
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) {
+    return value;
+  }
+
+  const suffix = hour >= 12 ? "PM" : "AM";
+  const displayHour = hour % 12 || 12;
+
+  return `${displayHour}:${String(minute).padStart(2, "0")} ${suffix}`;
 }

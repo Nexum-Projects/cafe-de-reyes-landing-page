@@ -37,6 +37,16 @@ export type MenuProduct = {
   sortOrder?: number;
 };
 
+export type EventLocation = {
+  id?: string;
+  eventId?: string;
+  fullAddress?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
 export type EventItem = {
   id: string;
   title: string;
@@ -45,7 +55,7 @@ export type EventItem = {
   imageUrl?: string | null;
   startDate?: string;
   endDate?: string | null;
-  location?: string | null;
+  location?: string | EventLocation | null;
   priceCents?: number | null;
   status?: "ACTIVE" | "CANCELLED" | "FINISHED";
   isActive?: boolean;
@@ -77,6 +87,54 @@ export type MediaItem = {
   value: string;
   sortOrder?: number;
   isPublic?: boolean;
+};
+
+export type WeekDay =
+  | "MONDAY"
+  | "TUESDAY"
+  | "WEDNESDAY"
+  | "THURSDAY"
+  | "FRIDAY"
+  | "SATURDAY"
+  | "SUNDAY";
+
+export type OpeningHour = {
+  id: string;
+  day: WeekDay;
+  startTime: string;
+  endTime: string;
+  isActive?: boolean;
+  isPublished?: boolean;
+};
+
+export type ActionButtonType = "INSTAGRAM" | "FACEBOOK" | "EMAIL" | "UBER" | "WAZE" | "WHATSAPP";
+
+export type ActionButton = {
+  id: string;
+  label?: string | null;
+  url?: string | null;
+  target?: "_self" | "_blank" | null;
+  type: ActionButtonType;
+  variant?: "PRIMARY" | "SECONDARY" | null;
+  value: string;
+  isActive?: boolean;
+  isPublished?: boolean;
+  sortOrder?: number;
+};
+
+export type ProjectLocation = {
+  id: string;
+  title: string;
+  description?: string | null;
+  imageUrl?: string | null;
+  latitude: number;
+  longitude: number;
+  fullAddress: string;
+  isActive?: boolean;
+  isPublished?: boolean;
+  sortOrder?: number;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type ProjectConfig = {
@@ -111,5 +169,8 @@ export type PublicLandingContent = {
   events: EventItem[];
   awards: Award[];
   media: MediaItem[];
+  openingHours: OpeningHour[];
+  actionButtons: ActionButton[];
+  locations: ProjectLocation[];
   projectConfig: ProjectConfig;
 };
