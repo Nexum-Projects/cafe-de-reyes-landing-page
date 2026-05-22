@@ -51,6 +51,7 @@ export function MenuCarousel({ categories, emptyText, initialProductsByType }: M
     setActiveQuery(normalizedQuery);
     setPageIndex(0);
     setFilterError(null);
+    setVisibleProducts(filterProductsByQuery(initialProductsByType[nextType] ?? [], normalizedQuery));
 
     startTransition(async () => {
       const response = await getPublicMenuProducts(nextType, normalizedQuery);
@@ -119,14 +120,15 @@ export function MenuCarousel({ categories, emptyText, initialProductsByType }: M
   return (
     <div className="min-w-0">
       {categories.length ? (
-        <div className="mb-8 flex flex-wrap gap-2">
+        <div className="mb-9 overflow-x-auto border-b border-[var(--blanco-roto)]/10 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex min-w-max items-end gap-10">
           {categories.map((type) => (
             <button
               className={cn(
-                "h-11 border px-4 text-xs font-semibold uppercase tracking-[0.16em] transition",
+                "relative pb-5 text-xs font-semibold uppercase tracking-[0.22em] transition duration-300",
                 type === activeType
-                  ? "border-[var(--blanco-roto)] bg-[var(--blanco-roto)] text-[var(--negro-profundo)]"
-                  : "border-[var(--blanco-roto)]/20 text-[var(--gris-suave)] hover:border-[var(--blanco-roto)]/55",
+                  ? "text-[var(--blanco-roto)] after:absolute after:inset-x-0 after:bottom-[-1px] after:h-px after:bg-[var(--blanco-roto)]"
+                  : "text-[var(--gris-suave)]/58 hover:text-[var(--gris-suave)]",
               )}
               disabled={isPending}
               key={type}
@@ -136,10 +138,11 @@ export function MenuCarousel({ categories, emptyText, initialProductsByType }: M
               {humanizeMenuProductType(type)}
             </button>
           ))}
+          </div>
         </div>
       ) : null}
 
-      <div className="flex flex-col gap-2 pb-5 lg:flex-row lg:items-center">
+      <div className="flex flex-col gap-4 pb-7 lg:flex-row lg:items-center">
         <div className="flex w-full flex-1 flex-col gap-4 sm:flex-row sm:items-center">
           <div className="min-w-[5.5rem]">
             <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[var(--gris-medio)]">
@@ -151,13 +154,13 @@ export function MenuCarousel({ categories, emptyText, initialProductsByType }: M
               </p>
             ) : null}
           </div>
-          <div className="flex h-11 w-full items-center border border-[var(--blanco-roto)]/18 bg-[var(--carbon)]/18">
-            <Search className="ml-3 h-4 w-4 text-[var(--azul-grisaceo)]" />
+          <div className="group flex h-12 w-full items-center border border-[var(--blanco-roto)]/14 bg-black/18 transition duration-300 hover:border-[var(--blanco-roto)]/28 focus-within:border-[var(--azul-grisaceo)]/55 focus-within:bg-black/28">
+            <Search className="ml-4 h-4 w-4 text-[var(--gris-suave)]/54 transition group-focus-within:text-[var(--azul-grisaceo)]" />
             <input
               aria-label="Buscar productos del menu"
-              className="h-full min-w-0 flex-1 bg-transparent px-3 text-sm text-[var(--blanco-roto)] outline-none placeholder:text-[var(--gris-medio)]"
+              className="h-full min-w-0 flex-1 bg-transparent px-4 text-sm text-[var(--blanco-roto)] outline-none placeholder:text-[var(--gris-medio)]"
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Buscar producto"
+              placeholder="Buscar café o platillo..."
               type="search"
               value={query}
             />
@@ -176,10 +179,10 @@ export function MenuCarousel({ categories, emptyText, initialProductsByType }: M
 
         {hasManyPages ? (
           <div className="flex items-center gap-2">
-            <BrandButton aria-label="Pagina anterior del menu" onClick={goToPrevious} size="icon" type="button" variant="ghost">
+            <BrandButton aria-label="Pagina anterior del menu" className="rounded-full border-[var(--blanco-roto)]/18 hover:border-[var(--blanco-roto)]/45" onClick={goToPrevious} size="icon" type="button" variant="ghost">
               <ArrowLeft className="h-4 w-4" />
             </BrandButton>
-            <BrandButton aria-label="Siguiente pagina del menu" onClick={goToNext} size="icon" type="button" variant="ghost">
+            <BrandButton aria-label="Siguiente pagina del menu" className="rounded-full border-[var(--blanco-roto)]/18 hover:border-[var(--blanco-roto)]/45" onClick={goToNext} size="icon" type="button" variant="ghost">
               <ArrowRight className="h-4 w-4" />
             </BrandButton>
           </div>
@@ -242,18 +245,30 @@ function MenuItem({ product }: { product: MenuProduct }) {
   const showAvailability = hasDisplayablePrice(product.priceCents) && product.isAvailable === false;
 
   return (
-    <article className="group grid min-h-[12rem] gap-5 py-7 sm:grid-cols-[8rem_1fr]">
-      <EditorialImage className="aspect-square" src={product.imageUrl} alt={product.name} />
-      <div>
-        <div className={cn("flex items-start gap-5", priceLabel && "justify-between")}>
-          <h4 className="font-display text-4xl leading-none">{product.name}</h4>
-          {priceLabel ? (
-            <p className="shrink-0 text-sm font-semibold text-[var(--blanco-roto)]">{priceLabel}</p>
-          ) : null}
+    <article className="group grid min-h-[10.5rem] gap-6 py-6 transition duration-300 hover:bg-[var(--blanco-roto)]/[0.025] sm:grid-cols-[9.5rem_1fr] sm:px-3">
+      <EditorialImage className="aspect-[4/3] sm:aspect-[1.18/1]" src={product.imageUrl} alt={product.name} />
+      <div className="flex min-w-0 flex-col justify-center">
+        <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+          <div className="min-w-0">
+            <h4 className="font-display text-3xl leading-none text-[var(--blanco-roto)] transition duration-300 group-hover:text-white sm:text-[2.65rem]">
+              {product.name}
+            </h4>
+            <RichText className="mt-3 max-w-2xl text-sm leading-6 text-[var(--gris-suave)]/72" html={product.description} />
+          </div>
+          <div className="hidden items-center gap-5 pb-1 sm:flex">
+            <span className="h-px w-16 bg-[var(--blanco-roto)]/25 transition duration-300 group-hover:w-20 group-hover:bg-[var(--azul-grisaceo)]/70" />
+            {priceLabel ? (
+              <p className="font-display shrink-0 text-3xl leading-none text-[var(--blanco-roto)]">{priceLabel}</p>
+            ) : null}
+          </div>
         </div>
-        <RichText className="mt-4 leading-7 text-[var(--gris-suave)]/82" html={product.description} />
+        {priceLabel ? (
+          <p className="mt-5 border-t border-[var(--blanco-roto)]/12 pt-3 font-display text-2xl leading-none text-[var(--blanco-roto)] sm:hidden">
+            {priceLabel}
+          </p>
+        ) : null}
         {showAvailability ? (
-          <p className="mt-5 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--gris-medio)]">
+          <p className="mt-4 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--gris-medio)]">
             Fuera de temporada
           </p>
         ) : null}
@@ -264,9 +279,9 @@ function MenuItem({ product }: { product: MenuProduct }) {
 
 function EditorialImage({ src, alt, className }: { src?: string | null; alt: string; className?: string }) {
   return (
-    <div className={cn("group relative overflow-hidden bg-[var(--gris-oscuro)]", className)}>
+    <div className={cn("relative overflow-hidden bg-[var(--gris-oscuro)] ring-1 ring-[var(--blanco-roto)]/8", className)}>
       {src ? (
-        <Image className="object-cover transition duration-700 group-hover:scale-[1.035]" src={src} alt={alt} fill sizes="8rem" />
+        <Image className="object-cover transition duration-700 group-hover:scale-[1.04]" src={src} alt={alt} fill sizes="(min-width: 640px) 9.5rem, 42vw" />
       ) : (
         <div className="flex h-full min-h-32 items-center justify-center text-xs uppercase tracking-[0.2em] text-[var(--gris-suave)]">
           Sin imagen

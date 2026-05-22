@@ -118,12 +118,19 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
 
       <MotionSection className="bg-[var(--negro-profundo)] px-5 py-20 text-[var(--blanco-roto)] sm:px-8 lg:px-12 lg:py-28" id="menu">
         <div className="mx-auto max-w-[1480px]">
-          <div className="grid gap-10 lg:grid-cols-[0.42fr_1fr]">
+          <div className="grid gap-10 lg:grid-cols-[0.34fr_1fr]">
             <SectionLabel dark number="02" eyebrow="Menu destacado" />
-            <SectionHeading dark title="El menu cambia porque la busqueda continua." />
+            <div>
+              <h2 className="font-display max-w-4xl text-balance text-4xl leading-[0.95] text-[var(--blanco-roto)] sm:text-6xl lg:text-[4.65rem]">
+                El menu cambia porque la busqueda continua.
+              </h2>
+              <p className="mt-7 text-xs font-semibold uppercase tracking-[0.28em] text-[var(--azul-grisaceo)]/85">
+                Cafe de especialidad · Cocina · Temporada
+              </p>
+            </div>
           </div>
 
-          <div className="mt-14">
+          <div className="mt-12">
             {menuCategories.length ? (
               <MenuCarousel
                 categories={menuCategories}
@@ -164,22 +171,26 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
       </MotionSection>
 
       <MotionSection
-        className="bg-[var(--negro-profundo)] px-5 py-20 text-[var(--blanco-roto)] sm:px-8 lg:px-12 lg:py-28"
+        className="bg-[var(--negro-profundo)] px-5 py-24 text-[var(--blanco-roto)] sm:px-8 lg:px-12 lg:py-32"
         id="reconocimientos"
       >
-        <div className="mx-auto grid max-w-[1480px] gap-12 lg:grid-cols-[0.86fr_1.14fr]">
-          <div>
+        <div className="mx-auto grid max-w-[1480px] gap-16 lg:grid-cols-[0.76fr_1.24fr] lg:gap-20">
+          <div className="lg:sticky lg:top-28 lg:self-start">
             <SectionLabel dark number="04" eyebrow="Reconocimientos" />
             <Image
               alt="Cafe de Reyes"
-              className="mt-10 h-auto w-64 object-contain"
+              className="mt-12 h-auto w-40 object-contain opacity-[0.86] sm:w-44"
               height={384}
               src="/brand/reyes-logo-full-white-transparent.png"
               width={570}
             />
-            <h2 className="font-display mt-10 max-w-xl text-5xl leading-none sm:text-7xl">
+            <div className="mt-10 h-px w-24 bg-[var(--blanco-roto)]/28" />
+            <h2 className="font-display mt-9 max-w-lg text-balance text-5xl leading-[0.98] sm:text-6xl lg:text-[4.15rem]">
               El reconocimiento es consecuencia.
             </h2>
+            <p className="mt-8 max-w-md text-base leading-8 text-[var(--gris-suave)]/66">
+              Cada taza, cada detalle y cada decision nos han llevado hasta aqui.
+            </p>
           </div>
           <AwardsCarousel awards={awards} emptyText="Los logros publicados apareceran aqui con un tratamiento sobrio." />
         </div>
