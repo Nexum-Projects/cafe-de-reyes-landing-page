@@ -17,7 +17,7 @@ import { BrandButtonLink } from "@/components/landing/brand-button";
 import { EventsCarousel } from "@/components/landing/events-carousel";
 import { GalleryCarousel } from "@/components/landing/gallery-carousel";
 import { LocationsCarousel } from "@/components/landing/locations-carousel";
-import { MenuCarousel } from "@/components/landing/menu-carousel";
+import { MenuCarousel, MenuEmptyState } from "@/components/landing/menu-carousel";
 import { MotionSection } from "@/components/landing/motion-shell";
 import { SiteHeader } from "@/components/landing/site-header";
 import { getMenuCategoriesWithProducts, groupMenuProductsByType } from "@/lib/menu-products";
@@ -134,13 +134,11 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
             {menuCategories.length ? (
               <MenuCarousel
                 categories={menuCategories}
-                emptyText="No hay productos publicados en esta categoria por el momento."
+                emptyText="Por el momento no hay productos publicados en esta categoria."
                 initialProductsByType={productsByType}
               />
             ) : (
-              <div className="py-12 text-center text-sm text-[var(--gris-medio)]">
-                No hay productos publicados en el menu por el momento.
-              </div>
+              <MenuEmptyState text="Por el momento no hay productos publicados en el menu." />
             )}
           </div>
         </div>
@@ -192,7 +190,7 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
               Cada taza, cada detalle y cada decision nos han llevado hasta aqui.
             </p>
           </div>
-          <AwardsCarousel awards={awards} emptyText="Los logros publicados apareceran aqui con un tratamiento sobrio." />
+          <AwardsCarousel awards={awards} emptyText="Por el momento no hay logros publicados." />
         </div>
       </MotionSection>
 
@@ -211,7 +209,7 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
             </div>
           </div>
           <div className="mt-14">
-            <EventsCarousel emptyText="No hay eventos publicados por el momento." events={events} />
+            <EventsCarousel emptyText="Por el momento no hay eventos publicados." events={events} />
           </div>
         </div>
       </MotionSection>
@@ -222,11 +220,11 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
             <SectionLabel number="06" eyebrow="Galeria" />
             <SectionHeading
               title="Barra, producto, proceso y memoria visual."
-              copy="Imagenes de la barra abierta, el producto y el oficio que sostienen la experiencia desde Xela."
+              copy="Imágenes de la barra, el café y el oficio que dan forma a la experiencia desde Xela."
             />
           </div>
           <div className="mt-14">
-            <GalleryCarousel emptyText="La galeria publica del CMS aparecera aqui." media={media} />
+            <GalleryCarousel emptyText="Por el momento no hay imagenes publicadas en la galeria." media={media} />
           </div>
         </div>
       </MotionSection>

@@ -20,6 +20,43 @@ type MenuCarouselProps = {
   initialProductsByType: Record<MenuProductType, MenuProduct[]>;
 };
 
+type MenuEmptyStateProps = {
+  text: string;
+  eyebrow?: string;
+  description?: string;
+};
+
+export function MenuEmptyState({
+  text,
+  eyebrow = "Menu en pausa",
+  description = "Cuando haya nuevos cafes y platillos, los presentaremos aqui como parte de la experiencia en barra.",
+}: MenuEmptyStateProps) {
+  return (
+    <motion.div
+      animate={{ opacity: 1, y: 0 }}
+      className="border-y border-[var(--blanco-roto)]/12 py-16"
+      initial={{ opacity: 0, y: 10 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+    >
+      <p className="text-[0.68rem] font-semibold uppercase tracking-[0.26em] text-[var(--azul-grisaceo)]/82">
+        {eyebrow}
+      </p>
+      <p className="font-display mt-5 max-w-xl text-3xl leading-tight text-[var(--blanco-roto)]/84">
+        {text}
+      </p>
+      <p className="mt-5 max-w-lg text-sm leading-7 text-[var(--gris-suave)]/62">
+        {description}
+      </p>
+      <motion.div
+        animate={{ scaleX: 1 }}
+        className="mt-8 h-px w-24 origin-left bg-[var(--blanco-roto)]/28"
+        initial={{ scaleX: 0 }}
+        transition={{ delay: 0.12, duration: 0.45, ease: "easeOut" }}
+      />
+    </motion.div>
+  );
+}
+
 export function MenuCarousel({ categories, emptyText, initialProductsByType }: MenuCarouselProps) {
   const initialType = categories[0];
   const [activeType, setActiveType] = useState<MenuProductType | undefined>(initialType);
@@ -41,6 +78,10 @@ export function MenuCarousel({ categories, emptyText, initialProductsByType }: M
   const resolvedEmptyText = activeQuery
     ? "No se encuentran productos para la busqueda."
     : emptyText;
+  const emptyStateEyebrow = activeQuery ? "Sin resultados" : "Menu en pausa";
+  const emptyStateDescription = activeQuery
+    ? "Prueba con otro nombre de cafe, platillo o preparacion."
+    : "Cuando haya nuevos cafes y platillos, los presentaremos aqui como parte de la experiencia en barra.";
 
   const fetchProducts = useCallback((nextType: MenuProductType, nextQuery: string) => {
     const normalizedQuery = nextQuery.trim();
@@ -234,7 +275,11 @@ export function MenuCarousel({ categories, emptyText, initialProductsByType }: M
           ) : null}
         </>
       ) : (
-        <EmptyState text={resolvedEmptyText} />
+        <MenuEmptyState
+          description={emptyStateDescription}
+          eyebrow={emptyStateEyebrow}
+          text={resolvedEmptyText}
+        />
       )}
     </div>
   );
@@ -287,14 +332,6 @@ function EditorialImage({ src, alt, className }: { src?: string | null; alt: str
           Sin imagen
         </div>
       )}
-    </div>
-  );
-}
-
-function EmptyState({ text }: { text: string }) {
-  return (
-    <div className="flex justify-center py-12 text-center">
-      <p className="max-w-xl text-sm leading-7 text-[var(--gris-medio)]">{text}</p>
     </div>
   );
 }

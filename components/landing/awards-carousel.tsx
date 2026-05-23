@@ -199,7 +199,15 @@ function AwardImage({ src, alt }: { src?: string | null; alt: string }) {
 function EmptyState({ text }: { text: string }) {
   return (
     <div className="border-y border-[var(--blanco-roto)]/12 py-16">
-      <p className="font-display max-w-xl text-3xl leading-tight text-[var(--blanco-roto)]/84">{text}</p>
+      <p className="text-[0.68rem] font-semibold uppercase tracking-[0.26em] text-[var(--azul-grisaceo)]/82">
+        En pausa
+      </p>
+      <p className="font-display mt-5 max-w-xl text-3xl leading-tight text-[var(--blanco-roto)]/84">
+        {text}
+      </p>
+      <p className="mt-5 max-w-lg text-sm leading-7 text-[var(--gris-suave)]/62">
+        Cuando haya nuevos reconocimientos, los presentaremos aqui como parte de nuestra historia.
+      </p>
       <div className="mt-8 h-px w-24 bg-[var(--blanco-roto)]/28" />
     </div>
   );

@@ -303,8 +303,17 @@ function GalleryImage({
 
 function EmptyState({ text }: { text: string }) {
   return (
-    <div className="flex justify-center py-12 text-center">
-      <p className="max-w-xl text-sm leading-7 text-[var(--gris-medio)]">{text}</p>
+    <div className="border-y border-[var(--linea)] py-16">
+      <p className="text-[0.68rem] font-semibold uppercase tracking-[0.26em] text-[var(--azul-grisaceo)]">
+        Galeria en pausa
+      </p>
+      <p className="font-display mt-5 max-w-xl text-3xl leading-tight text-[var(--negro-profundo)]">
+        {text}
+      </p>
+      <p className="mt-5 max-w-lg text-sm leading-7 text-[var(--gris-oscuro)]/75">
+        Cuando haya nuevas fotografias, este espacio mostrara la barra, el producto y la experiencia.
+      </p>
+      <div className="mt-8 h-px w-24 bg-[var(--negro-profundo)]/24" />
     </div>
   );
 }
