@@ -60,7 +60,7 @@ export function AwardsCarousel({ awards, emptyText }: AwardsCarouselProps) {
           <div className="flex items-center gap-3">
             <button
               aria-label="Pagina anterior de reconocimientos"
-              className="inline-flex h-11 w-11 items-center justify-center border border-[var(--blanco-roto)]/16 text-[var(--gris-suave)]/70 transition duration-300 hover:border-[var(--blanco-roto)]/40 hover:text-[var(--blanco-roto)]"
+              className="inline-flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border border-[var(--blanco-roto)]/24 text-[var(--gris-suave)]/76 transition duration-300 hover:border-[var(--blanco-roto)] hover:bg-[var(--blanco-roto)]/6 hover:text-[var(--blanco-roto)]"
               onClick={goToPrevious}
               type="button"
             >
@@ -68,7 +68,7 @@ export function AwardsCarousel({ awards, emptyText }: AwardsCarouselProps) {
             </button>
             <button
               aria-label="Siguiente pagina de reconocimientos"
-              className="inline-flex h-11 w-11 items-center justify-center border border-[var(--blanco-roto)]/16 text-[var(--gris-suave)]/70 transition duration-300 hover:border-[var(--blanco-roto)]/40 hover:text-[var(--blanco-roto)]"
+              className="inline-flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border border-[var(--blanco-roto)]/24 text-[var(--gris-suave)]/76 transition duration-300 hover:border-[var(--blanco-roto)] hover:bg-[var(--blanco-roto)]/6 hover:text-[var(--blanco-roto)]"
               onClick={goToNext}
               type="button"
             >

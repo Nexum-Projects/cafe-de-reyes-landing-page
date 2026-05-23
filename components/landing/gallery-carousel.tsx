@@ -6,7 +6,6 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 import type { MediaItem } from "@/app/actions/public-content/types";
-import { BrandButton } from "@/components/landing/brand-button";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 8;
@@ -116,13 +115,23 @@ export function GalleryCarousel({ media, emptyText }: GalleryCarouselProps) {
           <p className="text-xs uppercase tracking-[0.18em] text-[var(--gris-medio)]">
             {String(safePageIndex + 1).padStart(2, "0")} / {String(pages.length).padStart(2, "0")}
           </p>
-          <div className="flex items-center gap-2">
-            <BrandButton aria-label="Pagina anterior de galeria" onClick={goToPrevious} size="icon" type="button" variant="ghost">
+          <div className="flex items-center gap-3">
+            <button
+              aria-label="Pagina anterior de galeria"
+              className="inline-flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border border-[var(--negro-profundo)]/24 text-[var(--gris-oscuro)] transition duration-300 hover:border-[var(--negro-profundo)] hover:bg-[var(--negro-profundo)]/5 hover:text-[var(--negro-profundo)]"
+              onClick={goToPrevious}
+              type="button"
+            >
               <ArrowLeft className="h-4 w-4" />
-            </BrandButton>
-            <BrandButton aria-label="Siguiente pagina de galeria" onClick={goToNext} size="icon" type="button" variant="ghost">
+            </button>
+            <button
+              aria-label="Siguiente pagina de galeria"
+              className="inline-flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border border-[var(--negro-profundo)]/24 text-[var(--gris-oscuro)] transition duration-300 hover:border-[var(--negro-profundo)] hover:bg-[var(--negro-profundo)]/5 hover:text-[var(--negro-profundo)]"
+              onClick={goToNext}
+              type="button"
+            >
               <ArrowRight className="h-4 w-4" />
-            </BrandButton>
+            </button>
           </div>
         </div>
       ) : null}

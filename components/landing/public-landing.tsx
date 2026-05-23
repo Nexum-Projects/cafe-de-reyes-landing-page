@@ -196,11 +196,19 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
         </div>
       </MotionSection>
 
-      <MotionSection className="px-5 py-20 sm:px-8 lg:px-12 lg:py-28" id="eventos">
+      <MotionSection className="px-5 py-24 sm:px-8 lg:px-12 lg:py-32" id="eventos">
         <div className="mx-auto max-w-[1480px]">
-          <div className="grid gap-10 lg:grid-cols-[0.42fr_1fr]">
+          <div className="grid gap-10 lg:grid-cols-[0.34fr_1fr]">
             <SectionLabel number="05" eyebrow="Eventos" />
-            <SectionHeading title="Encuentros para entender el cafe, no solo tomarlo." copy="Catas, lanzamientos de lote y experiencias que hacen visible el oficio." />
+            <div>
+              <h2 className="font-display max-w-4xl text-balance text-4xl leading-[0.98] text-[var(--negro-profundo)] sm:text-6xl lg:text-[4.65rem]">
+                Experiencias alrededor del cafe.
+              </h2>
+              <p className="mt-7 max-w-xl text-base leading-8 text-[var(--gris-oscuro)]">
+                Catas, brunches y encuentros creados para compartir, aprender y disfrutar.
+              </p>
+              <div className="mt-9 h-px w-24 bg-[var(--negro-profundo)]/28" />
+            </div>
           </div>
           <div className="mt-14">
             <EventsCarousel emptyText="No hay eventos publicados por el momento." events={events} />
