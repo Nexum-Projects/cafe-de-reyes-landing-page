@@ -34,9 +34,21 @@ const SCHEMA_DAYS: Record<WeekDay, string> = {
 };
 
 export function getSiteUrl() {
-  const configuredUrl = env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  return normalizeSiteUrl(env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000");
+}
 
-  return configuredUrl.replace(/\/$/, "");
+function normalizeSiteUrl(value: string) {
+  const trimmed = value.trim().replace(/\/$/, "");
+
+  if (!trimmed) {
+    return "http://localhost:3000";
+  }
+
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+
+  return `https://${trimmed}`;
 }
 
 export function buildRootMetadata(): Metadata {
