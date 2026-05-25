@@ -6,6 +6,7 @@ import type {
   PublicLandingContent,
   WeekDay,
 } from "@/app/actions/public-content/types";
+import { buildActionButtonHref } from "@/lib/action-button-type";
 import { env } from "@/utils/env";
 
 const DEFAULT_DESCRIPTION =
@@ -252,13 +253,13 @@ function getSameAsLinks(actionButtons: ActionButton[], instagramUrl?: string | n
       continue;
     }
 
-    if (action.type !== "INSTAGRAM" && action.type !== "FACEBOOK") {
+    if (action.type === "EMAIL" || action.type === "WHATSAPP") {
       continue;
     }
 
-    const href = action.url ?? action.value;
+    const href = buildActionButtonHref(action.type, action.url ?? action.value);
 
-    if (href.startsWith("http")) {
+    if (href?.startsWith("http")) {
       links.add(href);
     }
   }

@@ -1,4 +1,7 @@
+import type { ActionButtonType } from "@/lib/action-button-type";
 import type { MenuProductType } from "@/lib/menu-product-type";
+
+export type { ActionButtonType };
 
 export type { MenuProductType };
 
@@ -106,8 +109,6 @@ export type OpeningHour = {
   isActive?: boolean;
   isPublished?: boolean;
 };
-
-export type ActionButtonType = "INSTAGRAM" | "FACEBOOK" | "EMAIL" | "UBER" | "WAZE" | "WHATSAPP";
 
 export type ActionButton = {
   id: string;

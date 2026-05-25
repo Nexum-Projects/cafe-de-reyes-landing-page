@@ -1,8 +1,6 @@
-import { Mail, MapPinned, Sprout } from "lucide-react";
+import { Sprout } from "lucide-react";
 import Image from "next/image";
 import type { ReactNode } from "react";
-import { FaFacebookF, FaInstagram, FaUber, FaWhatsapp } from "react-icons/fa";
-import { SiWaze } from "react-icons/si";
 
 import type {
   ActionButton,
@@ -12,6 +10,7 @@ import type {
   PublicLandingContent,
   WeekDay,
 } from "@/app/actions/public-content/types";
+import { ActionButtonIcon } from "@/components/landing/action-button-icon";
 import { BannerCarousel } from "@/components/landing/banner-carousel";
 import { BrandButtonLink } from "@/components/landing/brand-button";
 import { EventsCarousel } from "@/components/landing/events-carousel";
@@ -20,6 +19,7 @@ import { LocationsCarousel } from "@/components/landing/locations-carousel";
 import { MenuCarousel, MenuEmptyState } from "@/components/landing/menu-carousel";
 import { MotionSection } from "@/components/landing/motion-shell";
 import { SiteHeader } from "@/components/landing/site-header";
+import { buildActionButtonHref, humanizeActionButtonType } from "@/lib/action-button-type";
 import { getMenuCategoriesWithProducts, groupMenuProductsByType } from "@/lib/menu-products";
 import { cn } from "@/lib/utils";
 import { env } from "@/utils/env";
@@ -394,36 +394,6 @@ function FooterLink({
   );
 }
 
-function ActionButtonIcon({ type }: { type: ActionButtonType }) {
-  const className = "h-4 w-4";
-
-  if (type === "INSTAGRAM") {
-    return <FaInstagram className={className} />;
-  }
-
-  if (type === "FACEBOOK") {
-    return <FaFacebookF className={className} />;
-  }
-
-  if (type === "EMAIL") {
-    return <Mail className={className} />;
-  }
-
-  if (type === "UBER") {
-    return <FaUber className={className} />;
-  }
-
-  if (type === "WHATSAPP") {
-    return <FaWhatsapp className={className} />;
-  }
-
-  if (type === "WAZE") {
-    return <SiWaze className={className} />;
-  }
-
-  return <MapPinned className={className} />;
-}
-
 function EditorialImage({ src, alt, className }: { src?: string | null; alt: string; className?: string }) {
   return (
     <div className={cn("group relative overflow-hidden bg-[var(--gris-suave)]", className)}>
@@ -449,7 +419,7 @@ function getVisitActions(actionButtons: ActionButton[]): VisitAction[] {
 
   return publishedActions.reduce<VisitAction[]>((actions, action) => {
       const value = action.url ?? action.value;
-      const href = getActionHref(action.type, value);
+      const href = buildActionButtonHref(action.type, value);
 
       if (!href) {
         return actions;
@@ -458,7 +428,7 @@ function getVisitActions(actionButtons: ActionButton[]): VisitAction[] {
       actions.push({
         id: action.id,
         type: action.type,
-        label: action.label ?? getActionLabel(action.type),
+        label: action.label ?? humanizeActionButtonType(action.type),
         href,
         sortOrder: action.sortOrder ?? 0,
         target: action.target ?? "_blank",
@@ -466,37 +436,6 @@ function getVisitActions(actionButtons: ActionButton[]): VisitAction[] {
 
       return actions;
   }, []);
-}
-
-function getActionHref(type: ActionButtonType, value: string) {
-  if (type === "EMAIL") {
-    return value.startsWith("mailto:") ? value : `mailto:${value}`;
-  }
-
-  if (type === "WHATSAPP") {
-    if (value.startsWith("http")) {
-      return value;
-    }
-
-    const digits = value.replace(/\D/g, "");
-
-    return digits ? `https://wa.me/${digits}` : value;
-  }
-
-  return value;
-}
-
-function getActionLabel(type: ActionButtonType) {
-  const labels: Record<ActionButtonType, string> = {
-    EMAIL: "Escribir",
-    FACEBOOK: "Ver Facebook",
-    INSTAGRAM: "Ver Instagram",
-    UBER: "Uber",
-    WAZE: "Como llegar",
-    WHATSAPP: "WhatsApp",
-  };
-
-  return labels[type];
 }
 
 function getOpeningHourCards(openingHours: OpeningHour[]) {
