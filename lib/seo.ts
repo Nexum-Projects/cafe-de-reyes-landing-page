@@ -75,6 +75,9 @@ export function buildRootMetadata(): Metadata {
     alternates: {
       canonical: "/",
     },
+    verification: {
+      google: "8mIV1YmkfytGAkWJc4oqb46yNdQE8UUAiyVQviE9-p0",
+    },
     icons: {
       icon: [
         {
