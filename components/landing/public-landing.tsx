@@ -5,10 +5,8 @@ import type { ReactNode } from "react";
 import type {
   ActionButton,
   ActionButtonType,
-  OpeningHour,
   ProjectLocation,
   PublicLandingContent,
-  WeekDay,
 } from "@/app/actions/public-content/types";
 import { ActionButtonIcon } from "@/components/landing/action-button-icon";
 import { BannerCarousel } from "@/components/landing/banner-carousel";
@@ -18,6 +16,7 @@ import { GalleryCarousel } from "@/components/landing/gallery-carousel";
 import { LocationsCarousel } from "@/components/landing/locations-carousel";
 import { MenuCarousel, MenuEmptyState } from "@/components/landing/menu-carousel";
 import { MotionSection } from "@/components/landing/motion-shell";
+import { OpeningHoursSection } from "@/components/landing/opening-hours-section";
 import { PackagedCoffeeCarousel, PackagedCoffeeEmptyState } from "@/components/landing/packaged-coffee-carousel";
 import { SiteHeader } from "@/components/landing/site-header";
 import { buildActionButtonHref, humanizeActionButtonType } from "@/lib/action-button-type";
@@ -68,7 +67,6 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
   const siteName = content.projectConfig.siteName ?? env.NEXT_PUBLIC_SITE_NAME ?? "Cafe de Reyes";
   const address = primaryLocation?.fullAddress ?? content.projectConfig.address ?? "Guatemala, Quetzaltenango, Quetzaltenango";
   const visitActions = getVisitActions(content.actionButtons).slice(0, 3);
-  const openingHourCards = getOpeningHourCards(content.openingHours);
   const locationImage = media[2]?.value ?? media[0]?.value;
 
   return (
@@ -311,16 +309,7 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
               Un espacio donde el origen, la tecnica y la hospitalidad se encuentran en una barra abierta para descubrir.
             </p>
 
-            {openingHourCards.length ? (
-              <div className="mt-10">
-                <SectionMicroHeading label="Horarios" />
-                <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
-                  {openingHourCards.map((hour) => (
-                    <OpeningHourCard close={hour.close} day={hour.day} key={hour.day} open={hour.open} />
-                  ))}
-                </div>
-              </div>
-            ) : null}
+            <OpeningHoursSection openingHours={content.openingHours} />
 
             {visitActions.length ? (
               <div className="mt-9">
@@ -433,16 +422,6 @@ function SectionMicroHeading({ label }: { label: string }) {
   );
 }
 
-function OpeningHourCard({ day, open, close }: { day: string; open: string; close: string }) {
-  return (
-    <div className="border-l border-[var(--linea)] pl-3 text-sm">
-      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--negro-profundo)]">{day}</p>
-      <p className="mt-4 text-[var(--gris-oscuro)]">{open}</p>
-      <p className="mt-1 text-[var(--gris-oscuro)]">{close}</p>
-    </div>
-  );
-}
-
 function FooterLink({
   children,
   href,
@@ -498,48 +477,3 @@ function getVisitActions(actionButtons: ActionButton[]): VisitAction[] {
   }, []);
 }
 
-function getOpeningHourCards(openingHours: OpeningHour[]) {
-  return openingHours
-    .filter((hour) => hour.isActive !== false && hour.isPublished !== false)
-    .sort((first, second) => getWeekDayIndex(first.day) - getWeekDayIndex(second.day))
-    .map((hour) => ({
-      close: formatTime(hour.endTime),
-      day: getWeekDayShortLabel(hour.day),
-      open: formatTime(hour.startTime),
-    }));
-}
-
-function getWeekDayIndex(day: WeekDay) {
-  return WEEK_DAYS.indexOf(day);
-}
-
-const WEEK_DAYS: WeekDay[] = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
-
-function getWeekDayShortLabel(day: WeekDay) {
-  const labels: Record<WeekDay, string> = {
-    FRIDAY: "Vie",
-    MONDAY: "Lun",
-    SATURDAY: "Sab",
-    SUNDAY: "Dom",
-    THURSDAY: "Jue",
-    TUESDAY: "Mar",
-    WEDNESDAY: "Mie",
-  };
-
-  return labels[day];
-}
-
-function formatTime(value: string) {
-  const [hourValue, minuteValue] = value.split(":");
-  const hour = Number(hourValue);
-  const minute = Number(minuteValue);
-
-  if (!Number.isFinite(hour) || !Number.isFinite(minute)) {
-    return value;
-  }
-
-  const suffix = hour >= 12 ? "PM" : "AM";
-  const displayHour = hour % 12 || 12;
-
-  return `${displayHour}:${String(minute).padStart(2, "0")} ${suffix}`;
-}
