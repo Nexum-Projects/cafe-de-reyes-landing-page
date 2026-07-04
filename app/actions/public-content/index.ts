@@ -189,7 +189,9 @@ export async function getPublicMenuProducts(
 }> {
   const normalizedQuery = query.trim();
   const fallbackProducts = filterFallbackMenuProductsByQuery(
-    sortFallbackMenuProducts(fallbackContent.products.filter((product) => product.type === type)),
+    sortFallbackMenuProducts(
+      fallbackContent.products.filter((product) => product.type === "MENU_ITEM" && product.menuCategory === type),
+    ),
     normalizedQuery,
   );
 
@@ -203,7 +205,8 @@ export async function getPublicMenuProducts(
 
   try {
     const products = await fetchPublicList<MenuProduct>(projectId, "menu-products", {
-      type,
+      type: "MENU_ITEM",
+      menuCategory: type,
       ...(normalizedQuery ? { query: normalizedQuery } : {}),
     });
 
@@ -214,6 +217,47 @@ export async function getPublicMenuProducts(
     return {
       data: fallbackProducts,
       error: `Mostrando productos demo porque el API no respondio: ${detail}`,
+    };
+  }
+}
+
+export async function getPublicPackagedCoffeeProducts(
+  query = "",
+  projectId = env.NEXT_PUBLIC_PROJECT_ID,
+): Promise<{
+  data: MenuProduct[];
+  error?: string;
+  missingProjectId?: boolean;
+}> {
+  const normalizedQuery = query.trim();
+  const fallbackProducts = filterFallbackMenuProductsByQuery(
+    sortFallbackMenuProducts(
+      fallbackContent.products.filter((product) => product.type === "PACKAGED_COFFEE"),
+    ),
+    normalizedQuery,
+  );
+
+  if (!projectId) {
+    return {
+      data: fallbackProducts,
+      error: "Configura NEXT_PUBLIC_PROJECT_ID para consumir cafes empacados reales del CMS.",
+      missingProjectId: true,
+    };
+  }
+
+  try {
+    const products = await fetchPublicList<MenuProduct>(projectId, "menu-products", {
+      type: "PACKAGED_COFFEE",
+      ...(normalizedQuery ? { query: normalizedQuery } : {}),
+    });
+
+    return { data: products };
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : "No se pudo conectar con el API publico.";
+
+    return {
+      data: fallbackProducts,
+      error: `Mostrando cafes demo porque el API no respondio: ${detail}`,
     };
   }
 }
@@ -369,7 +413,8 @@ const fallbackContent: PublicLandingContent = {
       id: "hot-1",
       name: "Filtro Xela",
       description: "Lote de altura con lectura limpia, dulzor medio y final persistente.",
-      type: "HOT_DRINKS",
+      type: "MENU_ITEM",
+      menuCategory: "HOT_DRINKS",
       sortOrder: 1,
       priceCents: 3200,
       imageUrl:
@@ -382,7 +427,8 @@ const fallbackContent: PublicLandingContent = {
       id: "hot-2",
       name: "Espresso de origen",
       description: "Extraccion precisa para revelar proceso, varietal y memoria del lote.",
-      type: "HOT_DRINKS",
+      type: "MENU_ITEM",
+      menuCategory: "HOT_DRINKS",
       sortOrder: 2,
       priceCents: 3600,
       imageUrl:
@@ -394,7 +440,8 @@ const fallbackContent: PublicLandingContent = {
       id: "cold-1",
       name: "Cold brew de temporada",
       description: "Extraccion en frio, cuerpo suave y notas de cacao.",
-      type: "COLD_DRINKS",
+      type: "MENU_ITEM",
+      menuCategory: "COLD_DRINKS",
       sortOrder: 1,
       priceCents: 3400,
       imageUrl:
@@ -406,7 +453,8 @@ const fallbackContent: PublicLandingContent = {
       id: "plate-1",
       name: "Tostada de temporada",
       description: "Pan artesanal, producto local y una composicion pensada para acompanar la taza.",
-      type: "PLATES",
+      type: "MENU_ITEM",
+      menuCategory: "PLATES",
       sortOrder: 1,
       priceCents: 5400,
       imageUrl:
@@ -418,11 +466,55 @@ const fallbackContent: PublicLandingContent = {
       id: "brunch-1",
       name: "Brunch de barra",
       description: "Huevos, pan de masa madre y acompanamiento de temporada.",
-      type: "BRUNCH",
+      type: "MENU_ITEM",
+      menuCategory: "BRUNCH",
       sortOrder: 1,
       priceCents: 6800,
       imageUrl:
         "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=900&q=86",
+      isAvailable: true,
+      isPublished: true,
+    },
+    {
+      id: "packaged-1",
+      name: "Lote Xela de temporada",
+      description: "Cafe tostado por Diego con perfil dulce, acidez limpia y lectura clara del origen.",
+      type: "PACKAGED_COFFEE",
+      sortOrder: 1,
+      measurementValue: 340,
+      measurementUnit: "GRAMS",
+      priceCents: 9500,
+      imageUrl:
+        "https://images.unsplash.com/photo-1611854779393-1b2da9d400fe?auto=format&fit=crop&w=900&q=86",
+      isAvailable: true,
+      isFeatured: true,
+      isPublished: true,
+    },
+    {
+      id: "packaged-2",
+      name: "Microlote lavado",
+      description: "Una seleccion de temporada catada antes de salir a la venta en la barra.",
+      type: "PACKAGED_COFFEE",
+      sortOrder: 2,
+      measurementValue: 250,
+      measurementUnit: "GRAMS",
+      priceCents: 8200,
+      imageUrl:
+        "https://images.unsplash.com/photo-1610889556528-9a770e32642f?auto=format&fit=crop&w=900&q=86",
+      isAvailable: true,
+      isPublished: true,
+    },
+    {
+      id: "packaged-3",
+      name: "Tueste para filtro",
+      description: "Cafe empacado para preparar en casa sin perder la lectura del lote.",
+      type: "PACKAGED_COFFEE",
+      sortOrder: 3,
+      measurementValue: 1,
+      measurementUnit: "KILOGRAMS",
+      priceCents: 18500,
+      imageUrl:
+        "https://images.unsplash.com/photo-1610889556528-9a770e32642f?auto=format&fit=crop&w=900&q=86",
       isAvailable: true,
       isPublished: true,
     },

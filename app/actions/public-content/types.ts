@@ -1,9 +1,10 @@
 import type { ActionButtonType } from "@/lib/action-button-type";
-import type { MenuProductType } from "@/lib/menu-product-type";
+import type { MenuProductType, ProductMeasurementUnit, ProductType } from "@/lib/menu-product-type";
 
 export type { ActionButtonType };
 
 export type { MenuProductType };
+export type { ProductMeasurementUnit, ProductType };
 
 export type BannerButton = {
   id?: string;
@@ -32,7 +33,10 @@ export type MenuProduct = {
   slug?: string | null;
   description?: string | null;
   imageUrl?: string | null;
-  type: MenuProductType;
+  type: ProductType;
+  menuCategory?: MenuProductType | null;
+  measurementValue?: number | null;
+  measurementUnit?: ProductMeasurementUnit | null;
   priceCents?: number | null;
   isAvailable?: boolean;
   isPublished?: boolean;

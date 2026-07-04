@@ -11,6 +11,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es-GT" className="h-full antialiased">
+      <head>
+        <link
+          as="image"
+          href="/brand/reyes-logo-full-white-transparent.png"
+          rel="preload"
+          type="image/png"
+        />
+      </head>
       <body className="min-h-full">{children}</body>
     </html>
   );

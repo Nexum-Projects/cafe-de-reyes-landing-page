@@ -11,6 +11,7 @@ const navItems = [
   ["Menu", "#menu"],
   ["Origen", "#origen"],
   ["Eventos", "#eventos"],
+  ["Cafés", "#cafes"],
   ["Reconocimientos", "#reconocimientos"],
   ["Galeria", "#galeria"],
   ["Visitanos", "#visitanos"],
@@ -54,7 +55,9 @@ export function SiteHeader({ siteName }: { siteName: string }) {
           <Image
             alt={siteName}
             className="h-16 w-auto object-contain transition group-hover:opacity-80 sm:h-[4.5rem]"
+            fetchPriority="high"
             height={384}
+            loading="eager"
             priority
             src="/brand/reyes-logo-full-white-transparent.png"
             width={570}

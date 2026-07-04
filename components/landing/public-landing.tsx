@@ -18,9 +18,10 @@ import { GalleryCarousel } from "@/components/landing/gallery-carousel";
 import { LocationsCarousel } from "@/components/landing/locations-carousel";
 import { MenuCarousel, MenuEmptyState } from "@/components/landing/menu-carousel";
 import { MotionSection } from "@/components/landing/motion-shell";
+import { PackagedCoffeeCarousel, PackagedCoffeeEmptyState } from "@/components/landing/packaged-coffee-carousel";
 import { SiteHeader } from "@/components/landing/site-header";
 import { buildActionButtonHref, humanizeActionButtonType } from "@/lib/action-button-type";
-import { getMenuCategoriesWithProducts, groupMenuProductsByType } from "@/lib/menu-products";
+import { getMenuCategoriesWithProducts, getPackagedCoffeeProducts, groupMenuProductsByType } from "@/lib/menu-products";
 import { cn } from "@/lib/utils";
 import { env } from "@/utils/env";
 import { AwardsCarousel } from "./awards-carousel";
@@ -58,7 +59,7 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
   const products = content.products.filter((product) => product.isPublished !== false);
   const productsByType = groupMenuProductsByType(products);
   const menuCategories = getMenuCategoriesWithProducts(productsByType);
-  const featuredProduct = products.find((product) => product.isFeatured) ?? products[0];
+  const packagedCoffeeProducts = getPackagedCoffeeProducts(products);
   const events = content.events;
   const awards = content.awards.filter((award) => award.isPublished !== false);
   const media = content.media.filter((item) => item.type === "IMAGE" && item.isPublic !== false);
@@ -68,7 +69,6 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
   const address = primaryLocation?.fullAddress ?? content.projectConfig.address ?? "Guatemala, Quetzaltenango, Quetzaltenango";
   const visitActions = getVisitActions(content.actionButtons).slice(0, 3);
   const openingHourCards = getOpeningHourCards(content.openingHours);
-  const originImage = media[1]?.value ?? featuredProduct?.imageUrl;
   const locationImage = media[2]?.value ?? media[0]?.value;
 
   return (
@@ -84,34 +84,70 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
       <BannerCarousel banners={content.banners} media={media} />
 
       <MotionSection className="px-5 py-20 sm:px-8 lg:px-12 lg:py-28" id="origen">
-        <div className="mx-auto grid max-w-[1480px] gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
-          <div className="group">
-            <EditorialImage className="min-h-[28rem] lg:min-h-[42rem]" src={originImage} alt="Barra y proceso de Cafe de Reyes" />
+        <div className="mx-auto max-w-[1480px]">
+          <div className="grid gap-10 lg:grid-cols-[0.34fr_1fr]">
+            <SectionLabel number="01" eyebrow="Origen" />
+            <div>
+              <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h2 className="font-display max-w-4xl text-balance text-5xl leading-[0.96] sm:text-7xl">
+                    Xela como razon. La barra como metodo.
+                  </h2>
+                  <div className="mt-10 grid gap-8 text-[var(--gris-oscuro)] lg:grid-cols-2">
+                    <p className="text-xl leading-9">
+                      Cafe de Reyes comunica origen sin convertirlo en adorno. Cada taza parte de una pregunta concreta:
+                      quien lo cultiva, donde crece, como se procesa y que revela en barra.
+                    </p>
+                    <p className="leading-8">
+                      La experiencia se apoya en tecnica, trazabilidad y hospitalidad precisa. La busqueda continua se nota
+                      en el menu, en el tostado, en la forma de explicar y en la memoria que deja cada lote.
+                    </p>
+                  </div>
+                </div>
+                <Image
+                  alt="Barra de Cafe"
+                  className="h-auto w-36 shrink-0 mix-blend-multiply opacity-90 sm:w-44"
+                  height={196}
+                  src="/brand/reyes-barra-cafe-black.png"
+                  width={368}
+                />
+              </div>
+            </div>
           </div>
-          <div className="max-w-3xl lg:pb-10">
-            <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
-              <SectionLabel number="01" eyebrow="Origen" />
+
+          <div className="mt-16 grid gap-12 border-t border-[var(--linea)] pt-14 lg:grid-cols-[0.86fr_1fr] lg:items-center lg:gap-20">
+            <div className="max-w-2xl">
+              <EditorialBadge>La búsqueda</EditorialBadge>
+              <div className="mt-8 space-y-6 text-lg leading-9 text-[var(--carbon)]">
+                <p>
+                  En Quetzaltenango, sin presupuesto de marketing ni nombre en el circuito internacional, nació una obsesión
+                  simple: que cada taza dijera exactamente de dónde viene. Tostado, cata y barra como método.
+                </p>
+                <p>
+                  Hoy esa obsesión tiene un lugar físico. La barra de Café de Reyes está abierta a propósito, no hay nada
+                  detrás de una puerta. Cuando pedís un café, ves el proceso completo: el grano, el tueste, la extracción,
+                  la decisión detrás de cada taza.
+                </p>
+                <p>
+                  No venimos a convencerte con una lista de premios. Venimos a que te sientes en la barra y lo compruebes
+                  vos mismo.
+                </p>
+              </div>
+              <p className="font-display mt-10 max-w-xl text-3xl font-semibold italic leading-snug text-[var(--negro-profundo)]">
+                &ldquo;El café tiene nombre, apellido y dirección. Y este solo existe aquí.&rdquo;
+              </p>
+            </div>
+
+            <figure className="mx-auto w-fit max-w-full overflow-hidden border border-(--linea) lg:mx-0 lg:justify-self-end">
               <Image
-                alt="Barra de Cafe"
-                className="h-auto w-44 mix-blend-multiply sm:w-52"
-                height={196}
-                src="/brand/reyes-barra-cafe-black.png"
-                width={368}
+                alt="Diego preparando cafe en barra"
+                className="block h-auto w-full max-w-[400px]"
+                height={6000}
+                sizes="(min-width: 1024px) 400px, 100vw"
+                src="/landing/DSC04626.jpg"
+                width={3376}
               />
-            </div>
-            <h2 className="font-display mt-10 text-balance text-5xl leading-[0.96] sm:text-7xl">
-              Xela como razon. La barra como metodo.
-            </h2>
-            <div className="mt-10 grid gap-8 text-[var(--gris-oscuro)] lg:grid-cols-2">
-              <p className="text-xl leading-9">
-                Cafe de Reyes comunica origen sin convertirlo en adorno. Cada taza parte de una pregunta concreta:
-                quien lo cultiva, donde crece, como se procesa y que revela en barra.
-              </p>
-              <p className="leading-8">
-                La experiencia se apoya en tecnica, trazabilidad y hospitalidad precisa. La busqueda continua se nota
-                en el menu, en el tostado, en la forma de explicar y en la memoria que deja cada lote.
-              </p>
-            </div>
+            </figure>
           </div>
         </div>
       </MotionSection>
@@ -214,13 +250,40 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
         </div>
       </MotionSection>
 
+      <MotionSection className="bg-(--carbon) px-5 py-20 text-(--blanco-roto) sm:px-8 lg:px-12 lg:py-28" id="cafes">
+        <div className="mx-auto max-w-[1480px]">
+          <div className="grid gap-10 lg:grid-cols-[0.34fr_1fr]">
+            <SectionLabel dark number="06" eyebrow="Los cafés de esta temporada" />
+            <div>
+              <h2 className="font-display max-w-4xl text-balance text-4xl leading-[0.95] text-(--blanco-roto) sm:text-6xl lg:text-[4.65rem]">
+                Lo que Café de Reyes está tostando ahora.
+              </h2>
+              <p className="mt-7 max-w-2xl text-base leading-8 text-(--gris-suave)/72">
+                Cada lote se cata antes de salir a la venta. Esto es lo que hay disponible esta semana.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-12">
+            {packagedCoffeeProducts.length ? (
+              <PackagedCoffeeCarousel
+                emptyText="Por el momento no hay cafes empacados publicados."
+                initialProducts={packagedCoffeeProducts}
+              />
+            ) : (
+              <PackagedCoffeeEmptyState text="Por el momento no hay cafes empacados publicados." />
+            )}
+          </div>
+        </div>
+      </MotionSection>
+
       <MotionSection className="bg-[var(--gris-suave)] px-5 py-20 sm:px-8 lg:px-12 lg:py-28" id="galeria">
         <div className="mx-auto max-w-[1480px]">
           <div className="grid gap-10 lg:grid-cols-[0.42fr_1fr]">
-            <SectionLabel number="06" eyebrow="Galeria" />
+            <SectionLabel number="07" eyebrow="Galeria" />
             <SectionHeading
               title="Barra, producto, proceso y memoria visual."
-              copy="Imágenes de la barra, el café y el oficio que dan forma a la experiencia desde Xela."
+              copy="Lo que queda cuando la barra, el café y el oficio se vuelven imagen."
             />
           </div>
           <div className="mt-14">
@@ -311,6 +374,7 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
                   <FooterLink href="#menu">Menu</FooterLink>
                   <FooterLink href="#origen">Origen</FooterLink>
                   <FooterLink href="#eventos">Eventos</FooterLink>
+                  <FooterLink href="#cafes">Cafés</FooterLink>
                   <FooterLink href="#reconocimientos">Reconocimientos</FooterLink>
                   <FooterLink href="#galeria">Galeria</FooterLink>
                   <FooterLink href="#visitanos">Visitanos</FooterLink>
@@ -336,6 +400,14 @@ function SectionLabel({ number, eyebrow, dark = false }: { number: string; eyebr
       <span className="h-px w-12 bg-current opacity-30" />
       <span>{eyebrow}</span>
     </div>
+  );
+}
+
+function EditorialBadge({ children }: { children: ReactNode }) {
+  return (
+    <span className="inline-flex border border-[var(--negro-profundo)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--gris-oscuro)]">
+      {children}
+    </span>
   );
 }
 
@@ -391,18 +463,6 @@ function FooterLink({
     >
       {children}
     </a>
-  );
-}
-
-function EditorialImage({ src, alt, className }: { src?: string | null; alt: string; className?: string }) {
-  return (
-    <div className={cn("group relative overflow-hidden bg-[var(--gris-suave)]", className)}>
-      {src ? (
-        <Image className="object-cover transition duration-700 group-hover:scale-[1.035]" src={src} alt={alt} fill sizes="(min-width: 1024px) 32vw, 100vw" />
-      ) : (
-        <div className="flex h-full min-h-32 items-center justify-center text-xs uppercase tracking-[0.2em] text-[var(--gris-medio)]">Sin imagen</div>
-      )}
-    </div>
   );
 }
 

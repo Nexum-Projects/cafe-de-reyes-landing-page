@@ -19,8 +19,9 @@ export function groupMenuProductsByType(products: MenuProduct[]): Record<MenuPro
       continue;
     }
 
-    if (isMenuProductType(product.type)) {
-      grouped[product.type].push(product);
+    const category = product.menuCategory ?? (isMenuProductType(product.type) ? product.type : null);
+    if (product.type === "MENU_ITEM" && isMenuProductType(category)) {
+      grouped[category].push(product);
     }
   }
 
@@ -35,4 +36,10 @@ export function getMenuCategoriesWithProducts(
   productsByType: Record<MenuProductType, MenuProduct[]>,
 ): MenuProductType[] {
   return MENU_PRODUCT_TYPES.filter((type) => productsByType[type].length > 0);
+}
+
+export function getPackagedCoffeeProducts(products: MenuProduct[]): MenuProduct[] {
+  return products
+    .filter((product) => product.isPublished !== false && product.type === "PACKAGED_COFFEE")
+    .sort(compareBySortOrder);
 }

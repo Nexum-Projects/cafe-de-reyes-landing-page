@@ -1,4 +1,4 @@
-/** Alineado con `com.contenthub_api.ContentHubApi.enums.MenuProductType`. */
+/** Categorias de productos de menu alineadas con `MenuProductCategory` del ContentHubApi. */
 export const MENU_PRODUCT_TYPES = [
   "HOT_DRINKS",
   "COLD_DRINKS",
@@ -11,6 +11,12 @@ export const MENU_PRODUCT_TYPES = [
 export type MenuProductType = (typeof MENU_PRODUCT_TYPES)[number];
 
 export const DEFAULT_MENU_PRODUCT_TYPE: MenuProductType = "HOT_DRINKS";
+
+export const PRODUCT_TYPES = ["MENU_ITEM", "PACKAGED_COFFEE", "MERCHANDISE", "OTHER"] as const;
+export type ProductType = (typeof PRODUCT_TYPES)[number];
+
+export const PRODUCT_MEASUREMENT_UNITS = ["GRAMS", "KILOGRAMS", "MILLILITERS", "LITERS", "UNITS"] as const;
+export type ProductMeasurementUnit = (typeof PRODUCT_MEASUREMENT_UNITS)[number];
 
 export const MENU_PRODUCT_TYPE_LABELS: Record<MenuProductType, string> = {
   HOT_DRINKS: "Bebidas calientes",
@@ -31,4 +37,36 @@ export function humanizeMenuProductType(type: MenuProductType | string | null | 
   }
 
   return "Desconocido";
+}
+
+export function humanizeProductType(type: ProductType | string | null | undefined): string {
+  switch (type) {
+    case "MENU_ITEM":
+      return "Producto de menu";
+    case "PACKAGED_COFFEE":
+      return "Cafe empacado";
+    case "MERCHANDISE":
+      return "Mercancia";
+    case "OTHER":
+      return "Otro";
+    default:
+      return "Desconocido";
+  }
+}
+
+export function humanizeProductMeasurementUnit(unit: ProductMeasurementUnit | string | null | undefined): string {
+  switch (unit) {
+    case "GRAMS":
+      return "g";
+    case "KILOGRAMS":
+      return "kg";
+    case "MILLILITERS":
+      return "ml";
+    case "LITERS":
+      return "L";
+    case "UNITS":
+      return "unidades";
+    default:
+      return "";
+  }
 }

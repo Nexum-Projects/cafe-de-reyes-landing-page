@@ -164,7 +164,7 @@ function EditorialImage({
   return (
     <div className={cn("relative overflow-hidden bg-[var(--carbon)]", className)}>
       {src ? (
-        <Image alt={alt} className="object-cover" fill priority={priority} sizes="(min-width: 1024px) 44vw, 100vw" src={src} />
+        <Image alt={alt} className="object-cover" fill fetchPriority={priority ? "high" : undefined} loading={priority ? "eager" : "lazy"} priority={priority} sizes="(min-width: 1024px) 44vw, 100vw" src={src} />
       ) : (
         <div className="flex h-full min-h-56 items-center justify-center text-xs uppercase tracking-[0.2em] text-[var(--gris-suave)]">
           Sin imagen
