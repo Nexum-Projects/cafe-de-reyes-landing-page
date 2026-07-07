@@ -80,13 +80,12 @@ export function buildRootMetadata(): Metadata {
     },
     icons: {
       icon: [
-        {
-          url: "/brand/185caa23.png",
-          type: "image/png",
-        },
+        { url: "/favicon.ico", sizes: "any" },
+        { url: "/icon-48.png", sizes: "48x48", type: "image/png" },
+        { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
       ],
-      apple: "/brand/185caa23.png",
-      shortcut: "/brand/185caa23.png",
+      apple: "/apple-icon.png",
+      shortcut: "/favicon.ico",
     },
     openGraph: {
       type: "website",
