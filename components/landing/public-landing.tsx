@@ -20,7 +20,7 @@ import { OpeningHoursSection } from "@/components/landing/opening-hours-section"
 import { PackagedCoffeeCarousel, PackagedCoffeeEmptyState } from "@/components/landing/packaged-coffee-carousel";
 import { SiteHeader } from "@/components/landing/site-header";
 import { buildActionButtonHref, humanizeActionButtonType } from "@/lib/action-button-type";
-import { getMenuCategoriesWithProducts, getPackagedCoffeeProducts, groupMenuProductsByType } from "@/lib/menu-products";
+import { getPackagedCoffeeProducts, groupMenuProductsByType, hasMenuProducts } from "@/lib/menu-products";
 import { cn } from "@/lib/utils";
 import { env } from "@/utils/env";
 import { AwardsCarousel } from "./awards-carousel";
@@ -57,7 +57,7 @@ const primaryVisitButtonStyle = {
 export function PublicLanding({ content, warning }: PublicLandingProps) {
   const products = content.products.filter((product) => product.isPublished !== false);
   const productsByType = groupMenuProductsByType(products);
-  const menuCategories = getMenuCategoriesWithProducts(productsByType);
+  const hasMenu = hasMenuProducts(productsByType);
   const packagedCoffeeProducts = getPackagedCoffeeProducts(products);
   const events = content.events;
   const awards = content.awards.filter((award) => award.isPublished !== false);
@@ -165,9 +165,8 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
           </div>
 
           <div className="mt-12">
-            {menuCategories.length ? (
+            {hasMenu ? (
               <MenuCarousel
-                categories={menuCategories}
                 emptyText="Por el momento no hay productos publicados en esta categoria."
                 initialProductsByType={productsByType}
               />

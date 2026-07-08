@@ -9,13 +9,17 @@ import { getPublicMenuProducts } from "@/app/actions/public-content";
 import type { MenuProduct, MenuProductType } from "@/app/actions/public-content/types";
 import { BrandButton } from "@/components/landing/brand-button";
 import { RichText } from "@/components/landing/rich-text";
-import { humanizeMenuProductType } from "@/lib/menu-product-type";
+import {
+  getAvailableMenuSections,
+  getInitialMenuSelection,
+  getMenuCategoriesForSection,
+} from "@/lib/menu-products";
+import { humanizeMenuProductType, humanizeMenuSection, type MenuSection } from "@/lib/menu-product-type";
 import { cn, formatPrice, hasDisplayablePrice } from "@/lib/utils";
 
 const PAGE_SIZE = 3;
 
 type MenuCarouselProps = {
-  categories: MenuProductType[];
   emptyText: string;
   initialProductsByType: Record<MenuProductType, MenuProduct[]>;
 };
@@ -57,14 +61,21 @@ export function MenuEmptyState({
   );
 }
 
-export function MenuCarousel({ categories, emptyText, initialProductsByType }: MenuCarouselProps) {
-  const initialType = categories[0];
-  const [activeType, setActiveType] = useState<MenuProductType | undefined>(initialType);
+export function MenuCarousel({ emptyText, initialProductsByType }: MenuCarouselProps) {
+  const initialSelection = useMemo(() => getInitialMenuSelection(initialProductsByType), [initialProductsByType]);
+  const availableSections = useMemo(
+    () => getAvailableMenuSections(initialProductsByType),
+    [initialProductsByType],
+  );
+  const [activeSection, setActiveSection] = useState<MenuSection>(initialSelection.section);
+  const [activeType, setActiveType] = useState<MenuProductType | undefined>(initialSelection.type);
+  const sectionCategories = useMemo(
+    () => getMenuCategoriesForSection(initialProductsByType, activeSection),
+    [activeSection, initialProductsByType],
+  );
   const [query, setQuery] = useState("");
   const [activeQuery, setActiveQuery] = useState("");
-  const [visibleProducts, setVisibleProducts] = useState<MenuProduct[]>(
-    initialType ? initialProductsByType[initialType] : [],
-  );
+  const [visibleProducts, setVisibleProducts] = useState<MenuProduct[]>(initialSelection.products);
   const [filterError, setFilterError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const didMountRef = useRef(false);
@@ -129,6 +140,23 @@ export function MenuCarousel({ categories, emptyText, initialProductsByType }: M
     return () => window.clearTimeout(searchTimeout);
   }, [activeType, fetchProducts, query]);
 
+  function changeSection(nextSection: MenuSection) {
+    if (nextSection === activeSection) {
+      return;
+    }
+
+    const nextCategories = getMenuCategoriesForSection(initialProductsByType, nextSection);
+    const nextType = nextCategories[0];
+
+    if (!nextType) {
+      return;
+    }
+
+    setActiveSection(nextSection);
+    skipDebouncedSearchRef.current = true;
+    fetchProducts(nextType, query);
+  }
+
   function changeType(nextType: MenuProductType) {
     if (nextType === activeType && !filterError) {
       return;
@@ -160,10 +188,33 @@ export function MenuCarousel({ categories, emptyText, initialProductsByType }: M
 
   return (
     <div className="min-w-0">
-      {categories.length ? (
+      {availableSections.length > 1 ? (
+        <div className="mb-7 overflow-x-auto border-b border-[var(--blanco-roto)]/10 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex min-w-max items-end gap-8">
+            {availableSections.map((section) => (
+              <button
+                className={cn(
+                  "relative pb-4 text-[0.7rem] font-semibold uppercase tracking-[0.28em] transition duration-300",
+                  section === activeSection
+                    ? "text-[var(--blanco-roto)] after:absolute after:inset-x-0 after:bottom-[-1px] after:h-px after:bg-[var(--blanco-roto)]"
+                    : "text-[var(--gris-suave)]/58 hover:text-[var(--gris-suave)]",
+                )}
+                disabled={isPending}
+                key={section}
+                onClick={() => changeSection(section)}
+                type="button"
+              >
+                {humanizeMenuSection(section)}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {sectionCategories.length ? (
         <div className="mb-9 overflow-x-auto border-b border-[var(--blanco-roto)]/10 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div className="flex min-w-max items-end gap-10">
-          {categories.map((type) => (
+          {sectionCategories.map((type) => (
             <button
               className={cn(
                 "relative pb-5 text-xs font-semibold uppercase tracking-[0.22em] transition duration-300",

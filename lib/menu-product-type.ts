@@ -20,6 +20,35 @@ export const MENU_PRODUCT_TYPES = [
 
 export type MenuProductType = (typeof MENU_PRODUCT_TYPES)[number];
 
+export type MenuSection = "DRINKS" | "FOOD";
+
+export const MENU_DRINK_CATEGORIES = [
+  "ESPRESSO",
+  "MILK_DRINKS",
+  "FILTERED_COFFEE",
+  "INFUSION",
+  "COLD_BREW",
+  "HOT_DRINKS",
+  "COLD_DRINKS",
+  "SIGNATURE_DRINKS",
+  "NON_COFFEE",
+  "SEASONAL_DRINK",
+] as const satisfies readonly MenuProductType[];
+
+export const MENU_FOOD_CATEGORIES = [
+  "STARTERS",
+  "BRUNCH",
+  "PLATES",
+  "SANDWICHES",
+  "DESSERTS",
+  "SEASONAL_FOOD",
+] as const satisfies readonly MenuProductType[];
+
+export const MENU_SECTION_LABELS: Record<MenuSection, string> = {
+  DRINKS: "Bebidas",
+  FOOD: "Comidas",
+};
+
 export const DEFAULT_MENU_PRODUCT_TYPE: MenuProductType = "HOT_DRINKS";
 
 export const PRODUCT_TYPES = ["MENU_ITEM", "PACKAGED_COFFEE", "MERCHANDISE", "OTHER"] as const;
@@ -57,6 +86,14 @@ export function humanizeMenuProductType(type: MenuProductType | string | null | 
   }
 
   return "Desconocido";
+}
+
+export function getMenuProductSection(type: MenuProductType): MenuSection {
+  return (MENU_DRINK_CATEGORIES as readonly MenuProductType[]).includes(type) ? "DRINKS" : "FOOD";
+}
+
+export function humanizeMenuSection(section: MenuSection): string {
+  return MENU_SECTION_LABELS[section];
 }
 
 export function humanizeProductType(type: ProductType | string | null | undefined): string {
