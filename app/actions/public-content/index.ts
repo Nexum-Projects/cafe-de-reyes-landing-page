@@ -428,7 +428,7 @@ const fallbackContent: PublicLandingContent = {
       name: "Espresso de origen",
       description: "Extraccion precisa para revelar proceso, varietal y memoria del lote.",
       type: "MENU_ITEM",
-      menuCategory: "HOT_DRINKS",
+      menuCategory: "ESPRESSO",
       sortOrder: 2,
       priceCents: 3600,
       imageUrl:
@@ -441,7 +441,7 @@ const fallbackContent: PublicLandingContent = {
       name: "Cold brew de temporada",
       description: "Extraccion en frio, cuerpo suave y notas de cacao.",
       type: "MENU_ITEM",
-      menuCategory: "COLD_DRINKS",
+      menuCategory: "COLD_BREW",
       sortOrder: 1,
       priceCents: 3400,
       imageUrl:
