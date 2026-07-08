@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Search, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Coffee, Search, X } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 
@@ -328,8 +328,13 @@ function EditorialImage({ src, alt, className }: { src?: string | null; alt: str
       {src ? (
         <Image className="object-cover transition duration-700 group-hover:scale-[1.04]" src={src} alt={alt} fill sizes="(min-width: 640px) 9.5rem, 42vw" />
       ) : (
-        <div className="flex h-full min-h-32 items-center justify-center text-xs uppercase tracking-[0.2em] text-[var(--gris-suave)]">
-          Sin imagen
+        <div className="flex h-full min-h-32 items-center justify-center">
+          <div
+            aria-hidden
+            className="flex h-11 w-11 items-center justify-center border border-[var(--blanco-roto)]/10"
+          >
+            <Coffee className="h-5 w-5 text-[var(--gris-suave)]/32" strokeWidth={1.25} />
+          </div>
         </div>
       )}
     </div>
