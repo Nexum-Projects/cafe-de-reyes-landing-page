@@ -208,13 +208,6 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
         <div className="mx-auto grid max-w-[1480px] gap-16 lg:grid-cols-[0.76fr_1.24fr] lg:gap-20">
           <div className="lg:sticky lg:top-28 lg:self-start">
             <SectionLabel dark number="04" eyebrow="Reconocimientos" />
-            <Image
-              alt="Cafe de Reyes"
-              className="mt-12 h-auto w-40 object-contain opacity-[0.86] sm:w-44"
-              height={384}
-              src="/brand/reyes-logo-full-white-transparent.png"
-              width={570}
-            />
             <div className="mt-10 h-px w-24 bg-[var(--blanco-roto)]/28" />
             <h2 className="font-display mt-9 max-w-lg text-balance text-5xl leading-[0.98] sm:text-6xl lg:text-[4.15rem]">
               El reconocimiento es consecuencia.
