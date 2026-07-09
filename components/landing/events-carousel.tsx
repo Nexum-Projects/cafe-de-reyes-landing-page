@@ -67,7 +67,7 @@ export function EventsCarousel({ events, emptyText }: EventsCarouselProps) {
     <div className="min-w-0">
       <div className="mb-10 flex flex-col gap-6 border-b border-[var(--linea)] pb-5 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex items-center gap-8">
-          <EventTab active={mode === "upcoming"} label="Proximos" onClick={() => changeMode("upcoming")} />
+          <EventTab active={mode === "upcoming"} label="Próximos" onClick={() => changeMode("upcoming")} />
           <EventTab active={mode === "past"} label="Pasados" onClick={() => changeMode("past")} />
         </div>
 
@@ -78,7 +78,7 @@ export function EventsCarousel({ events, emptyText }: EventsCarouselProps) {
           {hasManyPages ? (
             <div className="flex items-center gap-3">
               <button
-                aria-label="Pagina anterior de eventos"
+                aria-label="Página anterior de eventos"
                 className="inline-flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border border-[var(--negro-profundo)]/24 text-[var(--gris-oscuro)] transition duration-300 hover:border-[var(--negro-profundo)] hover:bg-[var(--negro-profundo)]/5 hover:text-[var(--negro-profundo)]"
                 onClick={goToPrevious}
                 type="button"
@@ -86,7 +86,7 @@ export function EventsCarousel({ events, emptyText }: EventsCarouselProps) {
                 <ArrowLeft className="h-4 w-4" />
               </button>
               <button
-                aria-label="Siguiente pagina de eventos"
+                aria-label="Siguiente página de eventos"
                 className="inline-flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border border-[var(--negro-profundo)]/24 text-[var(--gris-oscuro)] transition duration-300 hover:border-[var(--negro-profundo)] hover:bg-[var(--negro-profundo)]/5 hover:text-[var(--negro-profundo)]"
                 onClick={goToNext}
                 type="button"
@@ -121,7 +121,7 @@ export function EventsCarousel({ events, emptyText }: EventsCarouselProps) {
             <div className="mt-9 flex items-center gap-2">
               {pages.map((_, index) => (
                 <button
-                  aria-label={`Ir a pagina ${index + 1} de eventos`}
+                  aria-label={`Ir a página ${index + 1} de eventos`}
                   className={cn(
                     "h-px transition-all duration-300",
                     index === safePageIndex
@@ -223,7 +223,7 @@ function EventExperienceCard({ event, index }: { event: EventItem; index: number
                 type="button"
               >
                 <MapPinned className="h-4 w-4" />
-                Como llegar
+                Cómo llegar
                 <ChevronDown className={cn("h-4 w-4 transition duration-300", directionsOpen && "rotate-180")} />
               </button>
               {directionsOpen ? (
@@ -280,7 +280,7 @@ function EmptyState({ text }: { text: string }) {
   return (
     <div className="border-y border-[var(--linea)] py-16">
       <p className="text-[0.68rem] font-semibold uppercase tracking-[0.26em] text-[var(--azul-grisaceo)]">
-        Proximamente
+        Próximamente
       </p>
       <p className="font-display mt-5 max-w-xl text-3xl leading-tight text-[var(--negro-profundo)]">
         {text}
@@ -343,7 +343,7 @@ function getEventCategory(event: EventItem) {
     return "Encuentro especial";
   }
 
-  return "Experiencia cafe";
+  return "Experiencia café";
 }
 
 function getEditorialLocationLabel(location: EventItem["location"]) {
@@ -354,7 +354,7 @@ function getEditorialLocationLabel(location: EventItem["location"]) {
   }
 
   if (/cafe|café/i.test(locationLabel)) {
-    return "Cafe de Reyes · Quetzaltenango";
+    return "Café de Reyes · Quetzaltenango";
   }
 
   return locationLabel;

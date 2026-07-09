@@ -31,11 +31,11 @@ type PublicLandingProps = {
 };
 
 const traceability = [
-  ["Region", "Tierras altas de Quetzaltenango"],
+  ["Región", "Tierras altas de Quetzaltenango"],
   ["Proceso", "Lavado, natural o experimental"],
-  ["Varietal", "Segun cosecha disponible"],
-  ["Productor", "Relacion directa"],
-  ["Altitud", "Lectura tecnica del perfil"],
+  ["Varietal", "Según cosecha disponible"],
+  ["Productor", "Relación directa"],
+  ["Altitud", "Lectura técnica del perfil"],
   ["Finca", "Lotes con nombre propio"],
 ];
 
@@ -64,7 +64,7 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
   const media = content.media.filter((item) => item.type === "IMAGE" && item.isPublic !== false);
   const locations = getPublishedLocations(content.locations ?? []);
   const primaryLocation = locations[0];
-  const siteName = content.projectConfig.siteName ?? env.NEXT_PUBLIC_SITE_NAME ?? "Cafe de Reyes";
+  const siteName = content.projectConfig.siteName ?? env.NEXT_PUBLIC_SITE_NAME ?? "Café de Reyes";
   const address = primaryLocation?.fullAddress ?? content.projectConfig.address ?? "Guatemala, Quetzaltenango, Quetzaltenango";
   const visitActions = getVisitActions(content.actionButtons).slice(0, 3);
   const locationImage = media[2]?.value ?? media[0]?.value;
@@ -89,21 +89,21 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
               <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <h2 className="font-display max-w-4xl text-balance text-5xl leading-[0.96] sm:text-7xl">
-                    Xela como razon. La barra como metodo.
+                    Xela como razón. La barra como método.
                   </h2>
                   <div className="mt-10 grid gap-8 text-[var(--gris-oscuro)] lg:grid-cols-2">
                     <p className="text-xl leading-9">
-                      Cafe de Reyes comunica origen sin convertirlo en adorno. Cada taza parte de una pregunta concreta:
-                      quien lo cultiva, donde crece, como se procesa y que revela en barra.
+                      Café de Reyes comunica origen sin convertirlo en adorno. Cada taza parte de una pregunta concreta:
+                      quién lo cultiva, dónde crece, cómo se procesa y qué revela en barra.
                     </p>
                     <p className="leading-8">
-                      La experiencia se apoya en tecnica, trazabilidad y hospitalidad precisa. La busqueda continua se nota
-                      en el menu, en el tostado, en la forma de explicar y en la memoria que deja cada lote.
+                      La experiencia se apoya en técnica, trazabilidad y hospitalidad precisa. La búsqueda continua se nota
+                      en el menú, en el tostado, en la forma de explicar y en la memoria que deja cada lote.
                     </p>
                   </div>
                 </div>
                 <Image
-                  alt="Barra de Cafe"
+                  alt="Barra de Café"
                   className="h-auto w-36 shrink-0 mix-blend-multiply opacity-90 sm:w-44"
                   height={196}
                   src="/brand/reyes-barra-cafe-black.png"
@@ -138,7 +138,7 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
 
             <figure className="mx-auto w-fit max-w-full overflow-hidden border border-(--linea) lg:mx-0 lg:justify-self-end">
               <Image
-                alt="Diego preparando cafe en barra"
+                alt="Diego preparando café en barra"
                 className="block h-auto w-full max-w-[400px]"
                 height={6000}
                 sizes="(min-width: 1024px) 400px, 100vw"
@@ -153,13 +153,13 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
       <MotionSection className="bg-[var(--negro-profundo)] px-5 py-20 text-[var(--blanco-roto)] sm:px-8 lg:px-12 lg:py-28" id="menu">
         <div className="mx-auto max-w-[1480px]">
           <div className="grid gap-10 lg:grid-cols-[0.34fr_1fr]">
-            <SectionLabel dark number="02" eyebrow="Menu destacado" />
+            <SectionLabel dark number="02" eyebrow="Menú destacado" />
             <div>
               <h2 className="font-display max-w-4xl text-balance text-4xl leading-[0.95] text-[var(--blanco-roto)] sm:text-6xl lg:text-[4.65rem]">
-                El menu cambia porque la busqueda continua.
+                El menú cambia porque la búsqueda continúa.
               </h2>
               <p className="mt-7 text-xs font-semibold uppercase tracking-[0.28em] text-[var(--azul-grisaceo)]/85">
-                Cafe de especialidad · Cocina · Temporada
+                Café de especialidad · cocina · temporada
               </p>
             </div>
           </div>
@@ -167,11 +167,11 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
           <div className="mt-12">
             {hasMenu ? (
               <MenuCarousel
-                emptyText="Por el momento no hay productos publicados en esta categoria."
+                emptyText="Por el momento no hay productos publicados en esta categoría."
                 initialProductsByType={productsByType}
               />
             ) : (
-              <MenuEmptyState text="Por el momento no hay productos publicados en el menu." />
+              <MenuEmptyState text="Por el momento no hay productos publicados en el menú." />
             )}
           </div>
         </div>
@@ -182,10 +182,10 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
           <div>
             <SectionLabel number="03" eyebrow="Trazabilidad" />
             <h2 className="font-display mt-10 max-w-3xl text-balance text-5xl leading-none sm:text-7xl">
-              Sabemos de donde viene. Sabemos quien lo hace.
+              Sabemos de dónde viene. Sabemos quién lo hace.
             </h2>
             <p className="mt-8 max-w-2xl text-lg leading-8 text-[var(--gris-oscuro)]">
-              La informacion tecnica no se esconde: se ordena. Region, proceso, varietal, productor, altitud y finca
+              La información técnica no se esconde: se ordena. Región, proceso, varietal, productor, altitud y finca
               aparecen como parte natural de la experiencia.
             </p>
           </div>
@@ -213,7 +213,7 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
               El reconocimiento es consecuencia.
             </h2>
             <p className="mt-8 max-w-md text-base leading-8 text-[var(--gris-suave)]/66">
-              Cada taza, cada detalle y cada decision nos han llevado hasta aqui.
+              Cada taza, cada detalle y cada decisión nos han llevado hasta aquí.
             </p>
           </div>
           <AwardsCarousel awards={awards} emptyText="Por el momento no hay logros publicados." />
@@ -226,7 +226,7 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
             <SectionLabel number="05" eyebrow="Eventos" />
             <div>
               <h2 className="font-display max-w-4xl text-balance text-4xl leading-[0.98] text-[var(--negro-profundo)] sm:text-6xl lg:text-[4.65rem]">
-                Experiencias alrededor del cafe.
+                Experiencias alrededor del café.
               </h2>
               <p className="mt-7 max-w-xl text-base leading-8 text-[var(--gris-oscuro)]">
                 Catas, brunches y encuentros creados para compartir, aprender y disfrutar.
@@ -257,11 +257,11 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
           <div className="mt-12">
             {packagedCoffeeProducts.length ? (
               <PackagedCoffeeCarousel
-                emptyText="Por el momento no hay cafes empacados publicados."
+                emptyText="Por el momento no hay cafés empacados publicados."
                 initialProducts={packagedCoffeeProducts}
               />
             ) : (
-              <PackagedCoffeeEmptyState text="Por el momento no hay cafes empacados publicados." />
+              <PackagedCoffeeEmptyState text="Por el momento no hay cafés empacados publicados." />
             )}
           </div>
         </div>
@@ -270,14 +270,14 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
       <MotionSection className="bg-[var(--gris-suave)] px-5 py-20 sm:px-8 lg:px-12 lg:py-28" id="galeria">
         <div className="mx-auto max-w-[1480px]">
           <div className="grid gap-10 lg:grid-cols-[0.42fr_1fr]">
-            <SectionLabel number="07" eyebrow="Galeria" />
+            <SectionLabel number="07" eyebrow="Galería" />
             <SectionHeading
               title="Barra, producto, proceso y memoria visual."
               copy="Lo que queda cuando la barra, el café y el oficio se vuelven imagen."
             />
           </div>
           <div className="mt-14">
-            <GalleryCarousel emptyText="Por el momento no hay imagenes publicadas en la galeria." media={media} />
+            <GalleryCarousel emptyText="Por el momento no hay imágenes publicadas en la galería." media={media} />
           </div>
         </div>
       </MotionSection>
@@ -286,7 +286,7 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
         <div className="mx-auto grid max-w-[1680px] lg:grid-cols-[55fr_45fr]">
           <div className="px-5 pb-20 pt-24 sm:px-8 lg:px-16 lg:pb-24 lg:pt-28 xl:px-20">
             <div className="flex items-center gap-5 text-xs font-semibold uppercase tracking-[0.26em] text-[var(--gris-oscuro)]">
-              <span>Visitanos</span>
+              <span>Visítanos</span>
               <span className="h-px w-20 bg-[var(--gris-medio)]/45" />
             </div>
 
@@ -297,15 +297,15 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
             </h2>
 
             <p className="mt-8 max-w-xl whitespace-pre-line text-base leading-8 text-[var(--gris-oscuro)]">
-              Cafe de Reyes nacio en Quetzaltenango.{"\n\n"}
-              Un espacio donde el origen, la tecnica y la hospitalidad se encuentran en una barra abierta para descubrir.
+              Café de Reyes nació en Quetzaltenango.{"\n\n"}
+              Un espacio donde el origen, la técnica y la hospitalidad se encuentran en una barra abierta para descubrir.
             </p>
 
             <OpeningHoursSection openingHours={content.openingHours} />
 
             {visitActions.length ? (
               <div className="mt-9">
-                <SectionMicroHeading label="Siguenos" />
+                <SectionMicroHeading label="Síguenos" />
                 <div className="mt-5 flex flex-col gap-3 sm:flex-row">
                   {visitActions.map((action, index) => (
                     <BrandButtonLink
@@ -352,20 +352,20 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
                   Explorar
                 </p>
                 <div className="grid justify-center gap-3 text-[var(--gris-suave)]/86">
-                  <FooterLink href="#menu">Menu</FooterLink>
+                  <FooterLink href="#menu">Menú</FooterLink>
                   <FooterLink href="#origen">Origen</FooterLink>
                   <FooterLink href="#eventos">Eventos</FooterLink>
                   <FooterLink href="#cafes">Cafés</FooterLink>
                   <FooterLink href="#reconocimientos">Reconocimientos</FooterLink>
-                  <FooterLink href="#galeria">Galeria</FooterLink>
-                  <FooterLink href="#visitanos">Visitanos</FooterLink>
+                  <FooterLink href="#galeria">Galería</FooterLink>
+                  <FooterLink href="#visitanos">Visítanos</FooterLink>
                 </div>
               </nav>
 
             </div>
 
             <div className="mt-12 border-t border-[var(--blanco-roto)]/12 pt-6 text-center text-sm text-[var(--gris-suave)]/70">
-              <p>© 2026 Cafe de Reyes. Todos los derechos reservados.</p>
+              <p>© 2026 Café de Reyes. Todos los derechos reservados.</p>
             </div>
           </div>
         </footer>

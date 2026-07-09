@@ -49,7 +49,7 @@ export function AwardsCarousel({ awards, emptyText }: AwardsCarouselProps) {
       <div className="mb-10 flex flex-col gap-5 border-b border-[var(--blanco-roto)]/12 pb-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-xs uppercase tracking-[0.26em] text-[var(--gris-suave)]/55">
-            Linea de prestigio
+            Línea de prestigio
           </p>
           <p className="mt-2 text-xs uppercase tracking-[0.22em] text-[var(--azul-grisaceo)]/75">
             {String(safePageIndex + 1).padStart(2, "0")} / {String(pages.length).padStart(2, "0")}
@@ -59,7 +59,7 @@ export function AwardsCarousel({ awards, emptyText }: AwardsCarouselProps) {
         {hasManyPages ? (
           <div className="flex items-center gap-3">
             <button
-              aria-label="Pagina anterior de reconocimientos"
+              aria-label="Página anterior de reconocimientos"
               className="inline-flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border border-[var(--blanco-roto)]/24 text-[var(--gris-suave)]/76 transition duration-300 hover:border-[var(--blanco-roto)] hover:bg-[var(--blanco-roto)]/6 hover:text-[var(--blanco-roto)]"
               onClick={goToPrevious}
               type="button"
@@ -67,7 +67,7 @@ export function AwardsCarousel({ awards, emptyText }: AwardsCarouselProps) {
               <ArrowLeft className="h-4 w-4" />
             </button>
             <button
-              aria-label="Siguiente pagina de reconocimientos"
+              aria-label="Siguiente página de reconocimientos"
               className="inline-flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border border-[var(--blanco-roto)]/24 text-[var(--gris-suave)]/76 transition duration-300 hover:border-[var(--blanco-roto)] hover:bg-[var(--blanco-roto)]/6 hover:text-[var(--blanco-roto)]"
               onClick={goToNext}
               type="button"
@@ -102,7 +102,7 @@ export function AwardsCarousel({ awards, emptyText }: AwardsCarouselProps) {
         <div className="mt-9 flex items-center gap-2">
           {pages.map((_, index) => (
             <button
-              aria-label={`Ir a pagina ${index + 1} de reconocimientos`}
+              aria-label={`Ir a página ${index + 1} de reconocimientos`}
               className={cn(
                 "h-px transition-all duration-300",
                 index === safePageIndex
@@ -206,7 +206,7 @@ function EmptyState({ text }: { text: string }) {
         {text}
       </p>
       <p className="mt-5 max-w-lg text-sm leading-7 text-[var(--gris-suave)]/62">
-        Cuando haya nuevos reconocimientos, los presentaremos aqui como parte de nuestra historia.
+        Cuando haya nuevos reconocimientos, los presentaremos aquí como parte de nuestra historia.
       </p>
       <div className="mt-8 h-px w-24 bg-[var(--blanco-roto)]/28" />
     </div>

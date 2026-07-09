@@ -1,4 +1,4 @@
-/** Categorias de productos de menu alineadas con `MenuProductCategory` del ContentHubApi. */
+/** Categorías de productos de menú alineadas con `MenuProductCategory` del ContentHubApi. */
 export const MENU_PRODUCT_TYPES = [
   "HOT_DRINKS",
   "COLD_DRINKS",
@@ -99,9 +99,9 @@ export function humanizeMenuSection(section: MenuSection): string {
 export function humanizeProductType(type: ProductType | string | null | undefined): string {
   switch (type) {
     case "MENU_ITEM":
-      return "Producto de menu";
+      return "Producto de menú";
     case "PACKAGED_COFFEE":
-      return "Cafe empacado";
+      return "Café empacado";
     case "MERCHANDISE":
       return "Mercancia";
     case "OTHER":

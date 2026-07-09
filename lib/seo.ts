@@ -10,17 +10,22 @@ import { buildActionButtonHref } from "@/lib/action-button-type";
 import { env } from "@/utils/env";
 
 const DEFAULT_DESCRIPTION =
-  "Cafe de Reyes en Quetzaltenango (Xela). Cafe de especialidad con origen, trazabilidad y hospitalidad en barra.";
+  "Café de Reyes en Quetzaltenango (Xela). Café de especialidad con origen, trazabilidad y hospitalidad en barra.";
 
 const DEFAULT_KEYWORDS = [
   "cafe de reyes",
+  "café de reyes",
   "cafe de especialidad",
+  "café de especialidad",
   "quetzaltenango",
   "xela",
   "guatemala",
   "cafeteria",
+  "cafetería",
   "barra de cafe",
+  "barra de café",
   "cafe guatemala",
+  "café guatemala",
 ];
 
 const SCHEMA_DAYS: Record<WeekDay, string> = {
@@ -58,7 +63,7 @@ export function buildRootMetadata(): Metadata {
   return {
     metadataBase: new URL(siteUrl),
     title: {
-      default: `${siteName} | Cafe de especialidad en Quetzaltenango`,
+      default: `${siteName} | Café de especialidad en Quetzaltenango`,
       template: `%s | ${siteName}`,
     },
     description: DEFAULT_DESCRIPTION,
@@ -92,7 +97,7 @@ export function buildRootMetadata(): Metadata {
       locale: "es_GT",
       url: siteUrl,
       siteName,
-      title: `${siteName} | Cafe de especialidad en Quetzaltenango`,
+      title: `${siteName} | Café de especialidad en Quetzaltenango`,
       description: DEFAULT_DESCRIPTION,
       images: [
         {
@@ -105,7 +110,7 @@ export function buildRootMetadata(): Metadata {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${siteName} | Cafe de especialidad en Quetzaltenango`,
+      title: `${siteName} | Café de especialidad en Quetzaltenango`,
       description: DEFAULT_DESCRIPTION,
       images: ["/brand/reyes-logo-full-black.png"],
     },
@@ -128,7 +133,7 @@ export function buildLandingMetadata(content: PublicLandingContent): Metadata {
     (banner) => banner.isPublished !== false && banner.isActive !== false,
   );
   const description = getLandingDescription(content, featuredBanner?.description);
-  const title = `${siteName} | Cafe de especialidad en Quetzaltenango`;
+  const title = `${siteName} | Café de especialidad en Quetzaltenango`;
   const imageUrl = getLandingImage(content, featuredBanner?.imageUrl);
 
   return {
@@ -189,7 +194,7 @@ export function buildLocalBusinessJsonLd(content: PublicLandingContent) {
       "@type": "City",
       name: "Quetzaltenango",
     },
-    servesCuisine: "Cafe de especialidad",
+    servesCuisine: "Café de especialidad",
   };
 
   if (location?.latitude !== undefined && location?.longitude !== undefined) {

@@ -32,11 +32,11 @@ export function PackagedCoffeeCarousel({ emptyText, initialProducts }: PackagedC
   const safePageIndex = pages.length === 0 ? 0 : pageIndex % pages.length;
   const page = pages[safePageIndex] ?? [];
   const hasManyPages = pages.length > 1;
-  const resolvedEmptyText = activeQuery ? "No encontramos cafes empacados para esa busqueda." : emptyText;
-  const emptyStateEyebrow = activeQuery ? "Sin resultados" : "Cafe en pausa";
+  const resolvedEmptyText = activeQuery ? "No encontramos cafés empacados para esa búsqueda." : emptyText;
+  const emptyStateEyebrow = activeQuery ? "Sin resultados" : "Café en pausa";
   const emptyStateDescription = activeQuery
     ? "Prueba con otro nombre de lote, origen o proceso."
-    : "Cuando haya nuevos lotes empacados, apareceran aqui como parte de la temporada.";
+    : "Cuando haya nuevos lotes empacados, aparecerán aquí como parte de la temporada.";
 
   const fetchProducts = useCallback((nextQuery: string) => {
     const normalizedQuery = nextQuery.trim();
@@ -111,7 +111,7 @@ export function PackagedCoffeeCarousel({ emptyText, initialProducts }: PackagedC
           <div className="group flex h-12 w-full items-center border border-(--blanco-roto)/14 bg-black/18 transition duration-300 hover:border-(--blanco-roto)/28 focus-within:border-(--azul-grisaceo)/55 focus-within:bg-black/28">
             <Search className="ml-4 h-4 w-4 text-(--gris-suave)/54 transition group-focus-within:text-(--azul-grisaceo)" />
             <input
-              aria-label="Buscar cafes empacados"
+              aria-label="Buscar cafés empacados"
               className="h-full min-w-0 flex-1 bg-transparent px-4 text-sm text-(--blanco-roto) outline-none placeholder:text-(--gris-medio)"
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Buscar lote, origen o proceso..."
@@ -120,7 +120,7 @@ export function PackagedCoffeeCarousel({ emptyText, initialProducts }: PackagedC
             />
             {query ? (
               <button
-                aria-label="Limpiar busqueda"
+                aria-label="Limpiar búsqueda"
                 className="inline-flex h-full w-10 items-center justify-center text-(--gris-medio) transition hover:text-(--blanco-roto)"
                 onClick={clearSearch}
                 type="button"
@@ -133,10 +133,10 @@ export function PackagedCoffeeCarousel({ emptyText, initialProducts }: PackagedC
 
         {hasManyPages ? (
           <div className="flex items-center gap-2">
-            <BrandButton aria-label="Pagina anterior de cafes empacados" className="rounded-full border-(--blanco-roto)/18 hover:border-(--blanco-roto)/45" onClick={goToPrevious} size="icon" type="button" variant="ghost">
+            <BrandButton aria-label="Página anterior de cafés empacados" className="rounded-full border-(--blanco-roto)/18 hover:border-(--blanco-roto)/45" onClick={goToPrevious} size="icon" type="button" variant="ghost">
               <ArrowLeft className="h-4 w-4" />
             </BrandButton>
-            <BrandButton aria-label="Siguiente pagina de cafes empacados" className="rounded-full border-(--blanco-roto)/18 hover:border-(--blanco-roto)/45" onClick={goToNext} size="icon" type="button" variant="ghost">
+            <BrandButton aria-label="Siguiente página de cafés empacados" className="rounded-full border-(--blanco-roto)/18 hover:border-(--blanco-roto)/45" onClick={goToNext} size="icon" type="button" variant="ghost">
               <ArrowRight className="h-4 w-4" />
             </BrandButton>
           </div>
@@ -172,7 +172,7 @@ export function PackagedCoffeeCarousel({ emptyText, initialProducts }: PackagedC
             <div className="mt-6 flex items-center gap-2">
               {pages.map((_, index) => (
                 <button
-                  aria-label={`Ir a pagina ${index + 1} de cafes empacados`}
+                  aria-label={`Ir a página ${index + 1} de cafés empacados`}
                   className={cn(
                     "h-px transition-all",
                     index === safePageIndex
@@ -209,7 +209,7 @@ function PackagedCoffeeCard({ product }: { product: MenuProduct }) {
         <div className="mb-5 flex items-center gap-3">
           <span className="h-px w-10 bg-(--azul-grisaceo)/70" />
           <p className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-(--gris-medio)">
-            Cafe empacado
+            Café empacado
           </p>
         </div>
         <h3 className="font-display text-3xl leading-none text-(--blanco-roto) transition duration-300 group-hover:text-white">
@@ -251,8 +251,8 @@ type PackagedCoffeeEmptyStateProps = {
 
 export function PackagedCoffeeEmptyState({
   text,
-  eyebrow = "Cafe en pausa",
-  description = "Cuando haya nuevos lotes empacados, apareceran aqui como parte de la temporada.",
+  eyebrow = "Café en pausa",
+  description = "Cuando haya nuevos lotes empacados, aparecerán aquí como parte de la temporada.",
 }: PackagedCoffeeEmptyStateProps) {
   return (
     <motion.div

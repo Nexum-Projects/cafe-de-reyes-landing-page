@@ -69,7 +69,7 @@ export function LocationsCarousel({ fallbackAddress, fallbackImage, locations }:
           <div className="absolute inset-0 overflow-hidden">
             {visualImage ? (
               <Image
-                alt={activeLocation?.title ?? "Cafe de Reyes en Quetzaltenango"}
+                alt={activeLocation?.title ?? "Café de Reyes en Quetzaltenango"}
                 className="object-cover"
                 fill
                 priority={false}
@@ -93,7 +93,7 @@ export function LocationsCarousel({ fallbackAddress, fallbackImage, locations }:
             {hasManyLocations ? (
               <div className="flex items-center gap-2">
                 <button
-                  aria-label="Ubicacion anterior"
+                  aria-label="Ubicación anterior"
                   className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--blanco-roto)]/28 bg-black/10 text-[var(--blanco-roto)] backdrop-blur transition hover:border-[var(--blanco-roto)]/60 hover:bg-[var(--blanco-roto)]/10"
                   onClick={goToPrevious}
                   type="button"
@@ -101,7 +101,7 @@ export function LocationsCarousel({ fallbackAddress, fallbackImage, locations }:
                   <ArrowLeft className="h-4 w-4" />
                 </button>
                 <button
-                  aria-label="Siguiente ubicacion"
+                  aria-label="Siguiente ubicación"
                   className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--blanco-roto)]/28 bg-black/10 text-[var(--blanco-roto)] backdrop-blur transition hover:border-[var(--blanco-roto)]/60 hover:bg-[var(--blanco-roto)]/10"
                   onClick={goToNext}
                   type="button"
@@ -115,10 +115,10 @@ export function LocationsCarousel({ fallbackAddress, fallbackImage, locations }:
           <div className="absolute inset-x-5 bottom-5 sm:inset-x-7 sm:bottom-7">
             <div className="max-w-xl border border-white/10 bg-black/35 p-6 shadow-2xl backdrop-blur-2xl sm:p-7">
               <p className="text-[0.68rem] font-semibold uppercase tracking-[0.3em] text-[var(--azul-grisaceo)]">
-                Encuentranos
+                Encuéntranos
               </p>
               <h3 className="font-display mt-4 text-4xl leading-none sm:text-5xl">
-                {activeLocation?.title ?? "Cafe de Reyes"}
+                {activeLocation?.title ?? "Café de Reyes"}
               </h3>
               <p className="mt-5 max-w-md text-sm leading-6 text-[var(--gris-suave)]/78">
                 <MapPinned className="mr-2 inline h-4 w-4 align-[-0.18em] text-[var(--azul-grisaceo)]" />

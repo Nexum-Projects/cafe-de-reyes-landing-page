@@ -212,11 +212,11 @@ export async function getPublicMenuProducts(
 
     return { data: products };
   } catch (error) {
-    const detail = error instanceof Error ? error.message : "No se pudo conectar con el API publico.";
+    const detail = error instanceof Error ? error.message : "No se pudo conectar con la API pública.";
 
     return {
       data: fallbackProducts,
-      error: `Mostrando productos demo porque el API no respondio: ${detail}`,
+      error: `Mostrando productos demo porque la API no respondió: ${detail}`,
     };
   }
 }
@@ -240,7 +240,7 @@ export async function getPublicPackagedCoffeeProducts(
   if (!projectId) {
     return {
       data: fallbackProducts,
-      error: "Configura NEXT_PUBLIC_PROJECT_ID para consumir cafes empacados reales del CMS.",
+      error: "Configura NEXT_PUBLIC_PROJECT_ID para consumir cafés empacados reales del CMS.",
       missingProjectId: true,
     };
   }
@@ -253,11 +253,11 @@ export async function getPublicPackagedCoffeeProducts(
 
     return { data: products };
   } catch (error) {
-    const detail = error instanceof Error ? error.message : "No se pudo conectar con el API publico.";
+    const detail = error instanceof Error ? error.message : "No se pudo conectar con la API pública.";
 
     return {
       data: fallbackProducts,
-      error: `Mostrando cafes demo porque el API no respondio: ${detail}`,
+      error: `Mostrando cafés demo porque la API no respondió: ${detail}`,
     };
   }
 }
@@ -294,11 +294,11 @@ export async function getPublicAwards(
 
     return { data: awards };
   } catch (error) {
-    const detail = error instanceof Error ? error.message : "No se pudo conectar con el API publico.";
+    const detail = error instanceof Error ? error.message : "No se pudo conectar con la API pública.";
 
     return {
       data: fallbackAwards,
-      error: `Mostrando logros demo porque el API no respondio: ${detail}`,
+      error: `Mostrando logros demo porque la API no respondió: ${detail}`,
     };
   }
 }
@@ -335,11 +335,11 @@ export async function getPublicEvents(
 
     return { data: events };
   } catch (error) {
-    const detail = error instanceof Error ? error.message : "No se pudo conectar con el API publico.";
+    const detail = error instanceof Error ? error.message : "No se pudo conectar con la API pública.";
 
     return {
       data: fallbackEvents,
-      error: `Mostrando eventos demo porque el API no respondio: ${detail}`,
+      error: `Mostrando eventos demo porque la API no respondió: ${detail}`,
     };
   }
 }
@@ -384,11 +384,11 @@ export async function getPublicLandingContent(projectId = env.NEXT_PUBLIC_PROJEC
       },
     };
   } catch (error) {
-    const detail = error instanceof Error ? error.message : "No se pudo conectar con el API publico.";
+    const detail = error instanceof Error ? error.message : "No se pudo conectar con la API pública.";
 
     return {
       data: fallbackContent,
-      error: `Mostrando contenido demo porque el API no respondio: ${detail}`,
+      error: `Mostrando contenido demo porque la API no respondió: ${detail}`,
     };
   }
 }
@@ -397,14 +397,14 @@ const fallbackContent: PublicLandingContent = {
   banners: [
     {
       id: "demo-banner",
-      title: "Cafe con nombre, apellido y direccion.",
+      title: "Café con nombre, apellido y dirección.",
       description:
         "Desde Quetzaltenango, una barra de especialidad donde el origen se revela taza por taza.",
       imageUrl:
         "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1800&q=88",
       buttons: [
-        { label: "Ver menu", url: "#menu", variant: "PRIMARY" },
-        { label: "Como llegar", url: "#visitanos", variant: "SECONDARY" },
+        { label: "Ver menú", url: "#menu", variant: "PRIMARY" },
+        { label: "Cómo llegar", url: "#visitanos", variant: "SECONDARY" },
       ],
     },
   ],
@@ -426,7 +426,7 @@ const fallbackContent: PublicLandingContent = {
     {
       id: "hot-2",
       name: "Espresso de origen",
-      description: "Extraccion precisa para revelar proceso, varietal y memoria del lote.",
+      description: "Extracción precisa para revelar proceso, varietal y memoria del lote.",
       type: "MENU_ITEM",
       menuCategory: "ESPRESSO",
       sortOrder: 2,
@@ -439,7 +439,7 @@ const fallbackContent: PublicLandingContent = {
     {
       id: "cold-1",
       name: "Cold brew de temporada",
-      description: "Extraccion en frio, cuerpo suave y notas de cacao.",
+      description: "Extracción en frío, cuerpo suave y notas de cacao.",
       type: "MENU_ITEM",
       menuCategory: "COLD_BREW",
       sortOrder: 1,
@@ -452,7 +452,7 @@ const fallbackContent: PublicLandingContent = {
     {
       id: "plate-1",
       name: "Tostada de temporada",
-      description: "Pan artesanal, producto local y una composicion pensada para acompanar la taza.",
+      description: "Pan artesanal, producto local y una composición pensada para acompañar la taza.",
       type: "MENU_ITEM",
       menuCategory: "PLATES",
       sortOrder: 1,
@@ -465,7 +465,7 @@ const fallbackContent: PublicLandingContent = {
     {
       id: "brunch-1",
       name: "Brunch de barra",
-      description: "Huevos, pan de masa madre y acompanamiento de temporada.",
+      description: "Huevos, pan de masa madre y acompañamiento de temporada.",
       type: "MENU_ITEM",
       menuCategory: "BRUNCH",
       sortOrder: 1,
@@ -478,7 +478,7 @@ const fallbackContent: PublicLandingContent = {
     {
       id: "packaged-1",
       name: "Lote Xela de temporada",
-      description: "Cafe tostado por Diego con perfil dulce, acidez limpia y lectura clara del origen.",
+      description: "Café tostado por Diego con perfil dulce, acidez limpia y lectura clara del origen.",
       type: "PACKAGED_COFFEE",
       sortOrder: 1,
       measurementValue: 340,
@@ -493,7 +493,7 @@ const fallbackContent: PublicLandingContent = {
     {
       id: "packaged-2",
       name: "Microlote lavado",
-      description: "Una seleccion de temporada catada antes de salir a la venta en la barra.",
+      description: "Una selección de temporada catada antes de salir a la venta en la barra.",
       type: "PACKAGED_COFFEE",
       sortOrder: 2,
       measurementValue: 250,
@@ -507,7 +507,7 @@ const fallbackContent: PublicLandingContent = {
     {
       id: "packaged-3",
       name: "Tueste para filtro",
-      description: "Cafe empacado para preparar en casa sin perder la lectura del lote.",
+      description: "Café empacado para preparar en casa sin perder la lectura del lote.",
       type: "PACKAGED_COFFEE",
       sortOrder: 3,
       measurementValue: 1,
@@ -524,7 +524,7 @@ const fallbackContent: PublicLandingContent = {
       id: "event-1",
       title: "Cata de microlotes",
       description:
-        "Una lectura guiada por perfiles de tueste, aromas, procesos y metodos de preparacion.",
+        "Una lectura guiada por perfiles de tueste, aromas, procesos y métodos de preparación.",
       imageUrl:
         "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1200&q=86",
       startDate: new Date().toISOString(),
@@ -539,7 +539,7 @@ const fallbackContent: PublicLandingContent = {
       title: "Top 100 mundial",
       description:
         "Un reconocimiento presentado como consecuencia del trabajo: origen, consistencia y criterio sostenido.",
-      sourceName: "Guia internacional",
+      sourceName: "Guía internacional",
       awardedAt: new Date().toISOString(),
       isFeatured: true,
       isPublished: true,
@@ -577,7 +577,7 @@ const fallbackContent: PublicLandingContent = {
     {
       id: "location-1",
       title: "Barra de Xela",
-      description: "La barra abierta donde origen, tecnica y hospitalidad se encuentran.",
+      description: "La barra abierta donde origen, técnica y hospitalidad se encuentran.",
       fullAddress: "Quetzaltenango, Guatemala",
       imageUrl:
         "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1200&q=88",
@@ -590,9 +590,9 @@ const fallbackContent: PublicLandingContent = {
   ],
   projectConfig: {
     address: "Guatemala, Quetzaltenango, Quetzaltenango",
-    hours: "Horarios publicados desde configuracion del proyecto",
+    hours: "Horarios publicados desde configuración del proyecto",
     instagramUrl: "https://www.instagram.com/",
     mapUrl: "https://maps.google.com/?q=Quetzaltenango%20Guatemala",
-    siteName: "Cafe de Reyes",
+    siteName: "Café de Reyes",
   },
 };

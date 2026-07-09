@@ -17,12 +17,12 @@ type BannerCarouselProps = {
 
 const defaultBanner: Banner = {
   id: "default-banner",
-  title: "Cafe con nombre, apellido y direccion.",
+  title: "Café con nombre, apellido y dirección.",
   description: "Desde Quetzaltenango, una barra de especialidad donde el origen se revela taza por taza.",
   imageUrl: "https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1800&q=88",
   buttons: [
-    { label: "Ver menu", url: "#menu", variant: "PRIMARY" },
-    { label: "Como llegar", url: "#visitanos", variant: "SECONDARY" },
+    { label: "Ver menú", url: "#menu", variant: "PRIMARY" },
+    { label: "Cómo llegar", url: "#visitanos", variant: "SECONDARY" },
   ],
 };
 
@@ -85,7 +85,7 @@ export function BannerCarousel({ banners, media }: BannerCarouselProps) {
       <div className="relative z-10 mx-auto flex min-h-[calc(100svh-5rem)] max-w-[1480px] flex-col justify-center px-5 py-16 pt-24 sm:px-8 lg:px-12 lg:py-20">
         <div className="max-w-5xl">
           <p className="mb-6 max-w-xl border-l border-[var(--azul-grisaceo)] pl-4 text-xs font-semibold uppercase tracking-[0.28em] text-[var(--gris-suave)]">
-            Origen · tecnica · trazabilidad · Xela
+            Origen · técnica · trazabilidad · Xela
           </p>
           <AnimatePresence mode="wait">
             <motion.div

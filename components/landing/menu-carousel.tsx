@@ -32,8 +32,8 @@ type MenuEmptyStateProps = {
 
 export function MenuEmptyState({
   text,
-  eyebrow = "Menu en pausa",
-  description = "Cuando haya nuevos cafes y platillos, los presentaremos aqui como parte de la experiencia en barra.",
+  eyebrow = "Menú en pausa",
+  description = "Cuando haya nuevos cafés y platillos, los presentaremos aquí como parte de la experiencia en barra.",
 }: MenuEmptyStateProps) {
   return (
     <motion.div
@@ -87,12 +87,12 @@ export function MenuCarousel({ emptyText, initialProductsByType }: MenuCarouselP
   const page = pages[safePageIndex] ?? [];
   const hasManyPages = pages.length > 1;
   const resolvedEmptyText = activeQuery
-    ? "No se encuentran productos para la busqueda."
+    ? "No se encuentran productos para la búsqueda."
     : emptyText;
-  const emptyStateEyebrow = activeQuery ? "Sin resultados" : "Menu en pausa";
+  const emptyStateEyebrow = activeQuery ? "Sin resultados" : "Menú en pausa";
   const emptyStateDescription = activeQuery
-    ? "Prueba con otro nombre de cafe, platillo o preparacion."
-    : "Cuando haya nuevos cafes y platillos, los presentaremos aqui como parte de la experiencia en barra.";
+    ? "Prueba con otro nombre de café, platillo o preparación."
+    : "Cuando haya nuevos cafés y platillos, los presentaremos aquí como parte de la experiencia en barra.";
 
   const fetchProducts = useCallback((nextType: MenuProductType, nextQuery: string) => {
     const normalizedQuery = nextQuery.trim();
@@ -249,7 +249,7 @@ export function MenuCarousel({ emptyText, initialProductsByType }: MenuCarouselP
           <div className="group flex h-12 w-full items-center border border-[var(--blanco-roto)]/14 bg-black/18 transition duration-300 hover:border-[var(--blanco-roto)]/28 focus-within:border-[var(--azul-grisaceo)]/55 focus-within:bg-black/28">
             <Search className="ml-4 h-4 w-4 text-[var(--gris-suave)]/54 transition group-focus-within:text-[var(--azul-grisaceo)]" />
             <input
-              aria-label="Buscar productos del menu"
+              aria-label="Buscar productos del menú"
               className="h-full min-w-0 flex-1 bg-transparent px-4 text-sm text-[var(--blanco-roto)] outline-none placeholder:text-[var(--gris-medio)]"
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Buscar café o platillo..."
@@ -258,7 +258,7 @@ export function MenuCarousel({ emptyText, initialProductsByType }: MenuCarouselP
             />
             {query ? (
               <button
-                aria-label="Limpiar busqueda"
+                aria-label="Limpiar búsqueda"
                 className="inline-flex h-full w-10 items-center justify-center text-[var(--gris-medio)] transition hover:text-[var(--blanco-roto)]"
                 onClick={clearSearch}
                 type="button"
@@ -271,10 +271,10 @@ export function MenuCarousel({ emptyText, initialProductsByType }: MenuCarouselP
 
         {hasManyPages ? (
           <div className="flex items-center gap-2">
-            <BrandButton aria-label="Pagina anterior del menu" className="rounded-full border-[var(--blanco-roto)]/18 hover:border-[var(--blanco-roto)]/45" onClick={goToPrevious} size="icon" type="button" variant="ghost">
+            <BrandButton aria-label="Página anterior del menú" className="rounded-full border-[var(--blanco-roto)]/18 hover:border-[var(--blanco-roto)]/45" onClick={goToPrevious} size="icon" type="button" variant="ghost">
               <ArrowLeft className="h-4 w-4" />
             </BrandButton>
-            <BrandButton aria-label="Siguiente pagina del menu" className="rounded-full border-[var(--blanco-roto)]/18 hover:border-[var(--blanco-roto)]/45" onClick={goToNext} size="icon" type="button" variant="ghost">
+            <BrandButton aria-label="Siguiente página del menú" className="rounded-full border-[var(--blanco-roto)]/18 hover:border-[var(--blanco-roto)]/45" onClick={goToNext} size="icon" type="button" variant="ghost">
               <ArrowRight className="h-4 w-4" />
             </BrandButton>
           </div>
@@ -310,7 +310,7 @@ export function MenuCarousel({ emptyText, initialProductsByType }: MenuCarouselP
             <div className="mt-6 flex items-center gap-2">
               {pages.map((_, index) => (
                 <button
-                  aria-label={`Ir a pagina ${index + 1} del menu`}
+                  aria-label={`Ir a página ${index + 1} del menú`}
                   className={cn(
                     "h-px transition-all",
                     index === safePageIndex

@@ -117,7 +117,7 @@ export function GalleryCarousel({ media, emptyText }: GalleryCarouselProps) {
           </p>
           <div className="flex items-center gap-3">
             <button
-              aria-label="Pagina anterior de galeria"
+              aria-label="Página anterior de galería"
               className="inline-flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border border-[var(--negro-profundo)]/24 text-[var(--gris-oscuro)] transition duration-300 hover:border-[var(--negro-profundo)] hover:bg-[var(--negro-profundo)]/5 hover:text-[var(--negro-profundo)]"
               onClick={goToPrevious}
               type="button"
@@ -125,7 +125,7 @@ export function GalleryCarousel({ media, emptyText }: GalleryCarouselProps) {
               <ArrowLeft className="h-4 w-4" />
             </button>
             <button
-              aria-label="Siguiente pagina de galeria"
+              aria-label="Siguiente página de galería"
               className="inline-flex h-[3.25rem] w-[3.25rem] items-center justify-center rounded-full border border-[var(--negro-profundo)]/24 text-[var(--gris-oscuro)] transition duration-300 hover:border-[var(--negro-profundo)] hover:bg-[var(--negro-profundo)]/5 hover:text-[var(--negro-profundo)]"
               onClick={goToNext}
               type="button"
@@ -148,7 +148,7 @@ export function GalleryCarousel({ media, emptyText }: GalleryCarouselProps) {
           >
             {page.map((item, index) => (
               <GalleryImage
-                alt="Cafe de Reyes"
+                alt="Café de Reyes"
                 className={getGalleryItemClassName(index)}
                 key={item.id}
                 onClick={() => setActiveImageIndex(safePageIndex * PAGE_SIZE + index)}
@@ -174,7 +174,7 @@ export function GalleryCarousel({ media, emptyText }: GalleryCarouselProps) {
         <div className="mt-6 flex items-center gap-2">
           {pages.map((_, index) => (
             <button
-              aria-label={`Ir a pagina ${index + 1} de galeria`}
+              aria-label={`Ir a página ${index + 1} de galería`}
               className={cn(
                 "h-px transition-all",
                 index === safePageIndex
@@ -198,7 +198,7 @@ export function GalleryCarousel({ media, emptyText }: GalleryCarouselProps) {
             initial={{ opacity: 0 }}
             role="dialog"
             aria-modal="true"
-            aria-label="Imagen ampliada de galeria"
+            aria-label="Imagen ampliada de galería"
             transition={{ duration: 0.22, ease: "easeOut" }}
           >
             <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/70 to-transparent" />
@@ -211,7 +211,7 @@ export function GalleryCarousel({ media, emptyText }: GalleryCarouselProps) {
             </div>
 
             <button
-              aria-label="Cerrar galeria"
+              aria-label="Cerrar galería"
               className="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center border border-[var(--blanco-roto)]/22 text-[var(--blanco-roto)] transition hover:border-[var(--blanco-roto)] hover:bg-[var(--blanco-roto)] hover:text-[var(--negro-profundo)] sm:right-8 sm:top-7"
               onClick={() => setActiveImageIndex(null)}
               type="button"
@@ -250,7 +250,7 @@ export function GalleryCarousel({ media, emptyText }: GalleryCarouselProps) {
                 transition={{ duration: 0.28, ease: "easeOut" }}
               >
                 <Image
-                  alt="Cafe de Reyes"
+                  alt="Café de Reyes"
                   className="object-contain"
                   fill
                   priority
@@ -279,7 +279,7 @@ function GalleryImage({
 }) {
   return (
     <button
-      aria-label="Abrir imagen de galeria"
+      aria-label="Abrir imagen de galería"
       className={cn("group relative overflow-hidden bg-[var(--gris-suave)] text-left", className)}
       onClick={onClick}
       type="button"
@@ -305,13 +305,13 @@ function EmptyState({ text }: { text: string }) {
   return (
     <div className="border-y border-[var(--linea)] py-16">
       <p className="text-[0.68rem] font-semibold uppercase tracking-[0.26em] text-[var(--azul-grisaceo)]">
-        Galeria en pausa
+        Galería en pausa
       </p>
       <p className="font-display mt-5 max-w-xl text-3xl leading-tight text-[var(--negro-profundo)]">
         {text}
       </p>
       <p className="mt-5 max-w-lg text-sm leading-7 text-[var(--gris-oscuro)]/75">
-        Cuando haya nuevas fotografias, este espacio mostrara la barra, el producto y la experiencia.
+        Cuando haya nuevas fotografías, este espacio mostrará la barra, el producto y la experiencia.
       </p>
       <div className="mt-8 h-px w-24 bg-[var(--negro-profundo)]/24" />
     </div>

@@ -8,13 +8,13 @@ import { BrandButton, BrandButtonLink } from "@/components/landing/brand-button"
 
 const navItems = [
   ["Inicio", "#inicio"],
-  ["Menu", "#menu"],
+  ["Menú", "#menu"],
   ["Origen", "#origen"],
   ["Eventos", "#eventos"],
   ["Cafés", "#cafes"],
   ["Reconocimientos", "#reconocimientos"],
-  ["Galeria", "#galeria"],
-  ["Visitanos", "#visitanos"],
+  ["Galería", "#galeria"],
+  ["Visítanos", "#visitanos"],
 ];
 
 export function SiteHeader({ siteName }: { siteName: string }) {
@@ -74,14 +74,14 @@ export function SiteHeader({ siteName }: { siteName: string }) {
 
         <div className="hidden lg:block">
           <BrandButtonLink href="#menu" size="sm" variant="secondary">
-            Ver menu
+            Ver menú
             <ArrowDownRight className="h-4 w-4" />
           </BrandButtonLink>
         </div>
 
         <BrandButton
           aria-expanded={isOpen}
-          aria-label={isOpen ? "Cerrar menu" : "Abrir menu"}
+          aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
           className="lg:hidden"
           onClick={() => setIsOpen((current) => !current)}
           size="icon"
@@ -106,7 +106,7 @@ export function SiteHeader({ siteName }: { siteName: string }) {
               </a>
             ))}
             <BrandButtonLink className="mt-4 w-full" href="#menu" onClick={() => setIsOpen(false)}>
-              Ver menu
+              Ver menú
               <ArrowDownRight className="h-4 w-4" />
             </BrandButtonLink>
           </div>

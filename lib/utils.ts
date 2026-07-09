@@ -30,13 +30,13 @@ export function formatPrice(cents?: number | string | null) {
 
 export function formatDate(value?: string | null) {
   if (!value) {
-    return "Proximamente";
+    return "Próximamente";
   }
 
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {
-    return "Proximamente";
+    return "Próximamente";
   }
 
   return new Intl.DateTimeFormat("es-GT", {
