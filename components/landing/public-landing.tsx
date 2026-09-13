@@ -20,7 +20,7 @@ import { OpeningHoursSection } from "@/components/landing/opening-hours-section"
 import { PackagedCoffeeCarousel, PackagedCoffeeEmptyState } from "@/components/landing/packaged-coffee-carousel";
 import { SiteHeader } from "@/components/landing/site-header";
 import { buildActionButtonHref, humanizeActionButtonType } from "@/lib/action-button-type";
-import { getPackagedCoffeeProducts, groupMenuProductsByType, hasMenuProducts } from "@/lib/menu-products";
+import { getPackagedCoffeeProducts, groupMenuProductsByCategory, hasMenuProducts } from "@/lib/menu-products";
 import { cn } from "@/lib/utils";
 import { env } from "@/utils/env";
 import { AwardsCarousel } from "./awards-carousel";
@@ -56,8 +56,8 @@ const primaryVisitButtonStyle = {
 
 export function PublicLanding({ content, warning }: PublicLandingProps) {
   const products = content.products.filter((product) => product.isPublished !== false);
-  const productsByType = groupMenuProductsByType(products);
-  const hasMenu = hasMenuProducts(productsByType);
+  const groupedMenu = groupMenuProductsByCategory(products, content.categories ?? []);
+  const hasMenu = hasMenuProducts(groupedMenu.categories);
   const packagedCoffeeProducts = getPackagedCoffeeProducts(products);
   const events = content.events;
   const awards = content.awards.filter((award) => award.isPublished !== false);
@@ -168,7 +168,8 @@ export function PublicLanding({ content, warning }: PublicLandingProps) {
             {hasMenu ? (
               <MenuCarousel
                 emptyText="Por el momento no hay productos publicados en esta categoría."
-                initialProductsByType={productsByType}
+                initialCategories={groupedMenu.categories}
+                initialProductsByCategory={groupedMenu.productsByCategoryId}
               />
             ) : (
               <MenuEmptyState text="Por el momento no hay productos publicados en el menú." />

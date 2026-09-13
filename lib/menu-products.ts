@@ -1,80 +1,139 @@
-import type { MenuProduct } from "@/app/actions/public-content/types";
+import type { MenuProduct, ProductCategory } from "@/app/actions/public-content/types";
 import {
-  MENU_DRINK_CATEGORIES,
-  MENU_FOOD_CATEGORIES,
-  MENU_PRODUCT_TYPES,
-  type MenuProductType,
-  type MenuSection,
+  getMenuCategorySection,
+  humanizeMenuProductType,
   isMenuProductType,
+  menuCategoryToSlug,
+  type MenuSection,
 } from "@/lib/menu-product-type";
 
-function compareBySortOrder(a: MenuProduct, b: MenuProduct) {
+function compareBySortOrder(a: { sortOrder?: number | null }, b: { sortOrder?: number | null }) {
   return (a.sortOrder ?? 0) - (b.sortOrder ?? 0);
 }
 
-const MENU_SECTION_CATEGORIES: Record<MenuSection, readonly MenuProductType[]> = {
-  DRINKS: MENU_DRINK_CATEGORIES,
-  FOOD: MENU_FOOD_CATEGORIES,
-};
+export function resolveProductCategoryId(product: MenuProduct): string | null {
+  return product.categoryId ?? product.category?.id ?? null;
+}
 
-export function groupMenuProductsByType(products: MenuProduct[]): Record<MenuProductType, MenuProduct[]> {
-  const grouped = Object.fromEntries(
-    MENU_PRODUCT_TYPES.map((type) => [type, [] as MenuProduct[]]),
-  ) as Record<MenuProductType, MenuProduct[]>;
+function syntheticCategoryFromEnum(menuCategory: MenuProduct["menuCategory"]): ProductCategory | null {
+  if (!menuCategory || !isMenuProductType(menuCategory)) {
+    return null;
+  }
 
-  for (const product of products) {
-    if (product.isPublished === false) {
+  const slug = menuCategoryToSlug(menuCategory);
+  if (!slug) {
+    return null;
+  }
+
+  return {
+    id: `demo-${slug}`,
+    name: humanizeMenuProductType(menuCategory),
+    slug,
+    catalogKind: "MENU_ITEM",
+    isPublished: true,
+    sortOrder: 0,
+  };
+}
+
+export function groupMenuProductsByCategory(
+  products: MenuProduct[],
+  categories: ProductCategory[],
+): {
+  categories: ProductCategory[];
+  productsByCategoryId: Record<string, MenuProduct[]>;
+} {
+  const catalog = new Map<string, ProductCategory>();
+
+  for (const category of categories) {
+    if (category.isPublished === false) {
       continue;
     }
 
-    const category = product.menuCategory ?? (isMenuProductType(product.type) ? product.type : null);
-    if (product.type === "MENU_ITEM" && isMenuProductType(category)) {
-      grouped[category].push(product);
+    catalog.set(category.id, category);
+  }
+
+  const productsByCategoryId: Record<string, MenuProduct[]> = {};
+
+  for (const product of products) {
+    if (product.isPublished === false || product.type !== "MENU_ITEM") {
+      continue;
     }
+
+    let category = product.category ?? null;
+    let categoryId = resolveProductCategoryId(product);
+
+    if (!categoryId && product.menuCategory) {
+      const slug = menuCategoryToSlug(product.menuCategory);
+      const fromCatalog = [...catalog.values()].find((item) => item.slug === slug);
+      if (fromCatalog) {
+        category = fromCatalog;
+        categoryId = fromCatalog.id;
+      } else {
+        category = syntheticCategoryFromEnum(product.menuCategory);
+        categoryId = category?.id ?? null;
+      }
+    }
+
+    if (!categoryId) {
+      continue;
+    }
+
+    if (category && !catalog.has(categoryId)) {
+      catalog.set(categoryId, category);
+    }
+
+    if (!catalog.has(categoryId)) {
+      continue;
+    }
+
+    productsByCategoryId[categoryId] ??= [];
+    productsByCategoryId[categoryId].push(product);
   }
 
-  for (const type of MENU_PRODUCT_TYPES) {
-    grouped[type].sort(compareBySortOrder);
+  for (const categoryId of Object.keys(productsByCategoryId)) {
+    productsByCategoryId[categoryId].sort(compareBySortOrder);
   }
 
-  return grouped;
-}
+  const visible = [...catalog.values()]
+    .filter((category) => (productsByCategoryId[category.id] ?? []).length > 0)
+    .sort(compareBySortOrder);
 
-export function getMenuCategoriesWithProducts(
-  productsByType: Record<MenuProductType, MenuProduct[]>,
-): MenuProductType[] {
-  return MENU_PRODUCT_TYPES.filter((type) => productsByType[type].length > 0);
+  return {
+    categories: visible,
+    productsByCategoryId,
+  };
 }
 
 export function getMenuCategoriesForSection(
-  productsByType: Record<MenuProductType, MenuProduct[]>,
+  categories: ProductCategory[],
   section: MenuSection,
-): MenuProductType[] {
-  return MENU_SECTION_CATEGORIES[section].filter((type) => productsByType[type].length > 0);
+): ProductCategory[] {
+  return categories.filter((category) => getMenuCategorySection(category.slug) === section);
 }
 
-export function getAvailableMenuSections(
-  productsByType: Record<MenuProductType, MenuProduct[]>,
-): MenuSection[] {
-  return (["DRINKS", "FOOD"] as const).filter(
-    (section) => getMenuCategoriesForSection(productsByType, section).length > 0,
+export function getAvailableMenuSections(categories: ProductCategory[]): MenuSection[] {
+  return (["DRINKS", "FOOD", "MORE"] as const).filter(
+    (section) => getMenuCategoriesForSection(categories, section).length > 0,
   );
 }
 
-export function hasMenuProducts(productsByType: Record<MenuProductType, MenuProduct[]>): boolean {
-  return getMenuCategoriesWithProducts(productsByType).length > 0;
+export function hasMenuProducts(categories: ProductCategory[]): boolean {
+  return categories.length > 0;
 }
 
-export function getInitialMenuSelection(productsByType: Record<MenuProductType, MenuProduct[]>) {
-  const sections = getAvailableMenuSections(productsByType);
+export function getInitialMenuSelection(
+  categories: ProductCategory[],
+  productsByCategoryId: Record<string, MenuProduct[]>,
+) {
+  const sections = getAvailableMenuSections(categories);
   const section = sections[0] ?? "DRINKS";
-  const categories = getMenuCategoriesForSection(productsByType, section);
-  const type = categories[0];
+  const sectionCategories = getMenuCategoriesForSection(categories, section);
+  const category = sectionCategories[0];
 
   return {
     section,
-    type,
-    products: type ? productsByType[type] : [],
+    category,
+    products: category ? productsByCategoryId[category.id] ?? [] : [],
   };
 }
 
