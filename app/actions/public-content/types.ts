@@ -1,5 +1,5 @@
 import type { ActionButtonType } from "@/lib/action-button-type";
-import type { MenuProductType, ProductMeasurementUnit, ProductType } from "@/lib/menu-product-type";
+import type { MenuProductType, MenuSection, ProductMeasurementUnit, ProductType } from "@/lib/menu-product-type";
 
 export type { ActionButtonType };
 
@@ -11,6 +11,7 @@ export type ProductCategory = {
   name: string;
   slug?: string | null;
   catalogKind?: ProductType;
+  menuSection?: MenuSection | null;
   description?: string | null;
   imageUrl?: string | null;
   isPublished?: boolean;

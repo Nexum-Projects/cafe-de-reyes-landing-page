@@ -1,6 +1,7 @@
 import type { MenuProduct, ProductCategory } from "@/app/actions/public-content/types";
 import {
   getMenuCategorySection,
+  getMenuProductSection,
   humanizeMenuProductType,
   isMenuProductType,
   menuCategoryToSlug,
@@ -30,6 +31,7 @@ function syntheticCategoryFromEnum(menuCategory: MenuProduct["menuCategory"]): P
     name: humanizeMenuProductType(menuCategory),
     slug,
     catalogKind: "MENU_ITEM",
+    menuSection: getMenuProductSection(menuCategory),
     isPublished: true,
     sortOrder: 0,
   };
@@ -108,11 +110,11 @@ export function getMenuCategoriesForSection(
   categories: ProductCategory[],
   section: MenuSection,
 ): ProductCategory[] {
-  return categories.filter((category) => getMenuCategorySection(category.slug) === section);
+  return categories.filter((category) => getMenuCategorySection(category.menuSection) === section);
 }
 
 export function getAvailableMenuSections(categories: ProductCategory[]): MenuSection[] {
-  return (["DRINKS", "FOOD", "MORE"] as const).filter(
+  return (["DRINKS", "FOOD"] as const).filter(
     (section) => getMenuCategoriesForSection(categories, section).length > 0,
   );
 }
