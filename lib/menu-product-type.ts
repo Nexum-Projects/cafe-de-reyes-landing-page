@@ -20,7 +20,7 @@ export const MENU_PRODUCT_TYPES = [
 
 export type MenuProductType = (typeof MENU_PRODUCT_TYPES)[number];
 
-export type MenuSection = "DRINKS" | "FOOD" | "MORE";
+export type MenuSection = "DRINKS" | "FOOD";
 
 export const MENU_DRINK_CATEGORIES = [
   "ESPRESSO",
@@ -44,32 +44,9 @@ export const MENU_FOOD_CATEGORIES = [
   "SEASONAL_FOOD",
 ] as const satisfies readonly MenuProductType[];
 
-export const MENU_DRINK_SLUGS = [
-  "espresso",
-  "milk-drinks",
-  "filtered-coffee",
-  "infusion",
-  "cold-brew",
-  "hot-drinks",
-  "cold-drinks",
-  "signature-drinks",
-  "non-coffee",
-  "seasonal-drink",
-] as const;
-
-export const MENU_FOOD_SLUGS = [
-  "starters",
-  "brunch",
-  "plates",
-  "sandwiches",
-  "desserts",
-  "seasonal-food",
-] as const;
-
 export const MENU_SECTION_LABELS: Record<MenuSection, string> = {
   DRINKS: "Bebidas",
   FOOD: "Comidas",
-  MORE: "Más",
 };
 
 export const DEFAULT_MENU_PRODUCT_TYPE: MenuProductType = "HOT_DRINKS";
@@ -123,16 +100,12 @@ export function menuCategoryToSlug(value: string | null | undefined): string | n
   return value.trim().toLowerCase().replace(/_/g, "-");
 }
 
-export function getMenuCategorySection(slug: string | null | undefined): MenuSection {
-  if (slug && (MENU_DRINK_SLUGS as readonly string[]).includes(slug)) {
-    return "DRINKS";
+export function getMenuCategorySection(menuSection: string | null | undefined): MenuSection | null {
+  if (menuSection === "DRINKS" || menuSection === "FOOD") {
+    return menuSection;
   }
 
-  if (slug && (MENU_FOOD_SLUGS as readonly string[]).includes(slug)) {
-    return "FOOD";
-  }
-
-  return "MORE";
+  return null;
 }
 
 export function humanizeMenuSection(section: MenuSection): string {
