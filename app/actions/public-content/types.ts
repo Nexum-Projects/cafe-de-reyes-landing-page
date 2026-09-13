@@ -6,6 +6,17 @@ export type { ActionButtonType };
 export type { MenuProductType };
 export type { ProductMeasurementUnit, ProductType };
 
+export type ProductCategory = {
+  id: string;
+  name: string;
+  slug?: string | null;
+  catalogKind?: ProductType;
+  description?: string | null;
+  imageUrl?: string | null;
+  isPublished?: boolean;
+  sortOrder?: number;
+};
+
 export type BannerButton = {
   id?: string;
   label: string;
@@ -35,6 +46,8 @@ export type MenuProduct = {
   imageUrl?: string | null;
   type: ProductType;
   menuCategory?: MenuProductType | null;
+  categoryId?: string | null;
+  category?: ProductCategory | null;
   measurementValue?: number | null;
   measurementUnit?: ProductMeasurementUnit | null;
   priceCents?: number | null;
@@ -171,6 +184,7 @@ export type SingleDataResponse<T> = {
 export type PublicLandingContent = {
   banners: Banner[];
   products: MenuProduct[];
+  categories: ProductCategory[];
   events: EventItem[];
   awards: Award[];
   media: MediaItem[];

@@ -12,8 +12,8 @@ import type {
   EventOrder,
   MediaItem,
   MenuProduct,
-  MenuProductType,
   OpeningHour,
+  ProductCategory,
   ProjectConfig,
   ProjectLocation,
   PublicLandingContent,
@@ -23,6 +23,7 @@ import type {
 type PublicResource =
   | "banners"
   | "menu-products"
+  | "product-categories"
   | "events"
   | "awards"
   | "media"
@@ -179,7 +180,7 @@ function filterFallbackAwardsByQuery(awards: Award[], query: string) {
 }
 
 export async function getPublicMenuProducts(
-  type: MenuProductType,
+  categoryId: string,
   query = "",
   projectId = env.NEXT_PUBLIC_PROJECT_ID,
 ): Promise<{
@@ -190,7 +191,9 @@ export async function getPublicMenuProducts(
   const normalizedQuery = query.trim();
   const fallbackProducts = filterFallbackMenuProductsByQuery(
     sortFallbackMenuProducts(
-      fallbackContent.products.filter((product) => product.type === "MENU_ITEM" && product.menuCategory === type),
+      fallbackContent.products.filter(
+        (product) => product.type === "MENU_ITEM" && (product.categoryId ?? product.category?.id) === categoryId,
+      ),
     ),
     normalizedQuery,
   );
@@ -206,7 +209,7 @@ export async function getPublicMenuProducts(
   try {
     const products = await fetchPublicList<MenuProduct>(projectId, "menu-products", {
       type: "MENU_ITEM",
-      menuCategory: type,
+      categoryId,
       ...(normalizedQuery ? { query: normalizedQuery } : {}),
     });
 
@@ -358,9 +361,10 @@ export async function getPublicLandingContent(projectId = env.NEXT_PUBLIC_PROJEC
   }
 
   try {
-    const [banners, products, events, awards, media, openingHours, actionButtons, locations, projectConfig] = await Promise.all([
+    const [banners, products, categories, events, awards, media, openingHours, actionButtons, locations, projectConfig] = await Promise.all([
       fetchPublicList<Banner>(projectId, "banners"),
       fetchPublicList<MenuProduct>(projectId, "menu-products"),
+      fetchPublicList<ProductCategory>(projectId, "product-categories", { catalogKind: "MENU_ITEM" }),
       fetchPublicList<EventItem>(projectId, "events"),
       fetchPublicList<Award>(projectId, "awards"),
       fetchPublicList<MediaItem>(projectId, "media", { isPublic: true }),
@@ -374,6 +378,7 @@ export async function getPublicLandingContent(projectId = env.NEXT_PUBLIC_PROJEC
       data: {
         banners,
         products,
+        categories,
         events,
         awards,
         media,
@@ -408,6 +413,13 @@ const fallbackContent: PublicLandingContent = {
       ],
     },
   ],
+  categories: [
+    { id: "demo-hot-drinks", name: "Bebidas calientes", slug: "hot-drinks", catalogKind: "MENU_ITEM", isPublished: true, sortOrder: 0 },
+    { id: "demo-espresso", name: "Espresso", slug: "espresso", catalogKind: "MENU_ITEM", isPublished: true, sortOrder: 1 },
+    { id: "demo-cold-brew", name: "Cold brew", slug: "cold-brew", catalogKind: "MENU_ITEM", isPublished: true, sortOrder: 2 },
+    { id: "demo-plates", name: "Platos", slug: "plates", catalogKind: "MENU_ITEM", isPublished: true, sortOrder: 3 },
+    { id: "demo-brunch", name: "Brunch", slug: "brunch", catalogKind: "MENU_ITEM", isPublished: true, sortOrder: 4 },
+  ],
   products: [
     {
       id: "hot-1",
@@ -415,6 +427,7 @@ const fallbackContent: PublicLandingContent = {
       description: "Lote de altura con lectura limpia, dulzor medio y final persistente.",
       type: "MENU_ITEM",
       menuCategory: "HOT_DRINKS",
+      categoryId: "demo-hot-drinks",
       sortOrder: 1,
       priceCents: 3200,
       imageUrl:
@@ -429,6 +442,7 @@ const fallbackContent: PublicLandingContent = {
       description: "Extracción precisa para revelar proceso, varietal y memoria del lote.",
       type: "MENU_ITEM",
       menuCategory: "ESPRESSO",
+      categoryId: "demo-espresso",
       sortOrder: 2,
       priceCents: 3600,
       imageUrl:
@@ -442,6 +456,7 @@ const fallbackContent: PublicLandingContent = {
       description: "Extracción en frío, cuerpo suave y notas de cacao.",
       type: "MENU_ITEM",
       menuCategory: "COLD_BREW",
+      categoryId: "demo-cold-brew",
       sortOrder: 1,
       priceCents: 3400,
       imageUrl:
@@ -455,6 +470,7 @@ const fallbackContent: PublicLandingContent = {
       description: "Pan artesanal, producto local y una composición pensada para acompañar la taza.",
       type: "MENU_ITEM",
       menuCategory: "PLATES",
+      categoryId: "demo-plates",
       sortOrder: 1,
       priceCents: 5400,
       imageUrl:
@@ -468,6 +484,7 @@ const fallbackContent: PublicLandingContent = {
       description: "Huevos, pan de masa madre y acompañamiento de temporada.",
       type: "MENU_ITEM",
       menuCategory: "BRUNCH",
+      categoryId: "demo-brunch",
       sortOrder: 1,
       priceCents: 6800,
       imageUrl:

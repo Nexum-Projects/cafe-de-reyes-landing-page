@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 
 import { getPublicMenuProducts } from "@/app/actions/public-content";
-import type { MenuProduct, MenuProductType } from "@/app/actions/public-content/types";
+import type { MenuProduct, ProductCategory } from "@/app/actions/public-content/types";
 import { BrandButton } from "@/components/landing/brand-button";
 import { RichText } from "@/components/landing/rich-text";
 import {
@@ -14,14 +14,15 @@ import {
   getInitialMenuSelection,
   getMenuCategoriesForSection,
 } from "@/lib/menu-products";
-import { humanizeMenuProductType, humanizeMenuSection, type MenuSection } from "@/lib/menu-product-type";
+import { humanizeMenuSection, type MenuSection } from "@/lib/menu-product-type";
 import { cn, formatPrice, hasDisplayablePrice } from "@/lib/utils";
 
 const PAGE_SIZE = 3;
 
 type MenuCarouselProps = {
   emptyText: string;
-  initialProductsByType: Record<MenuProductType, MenuProduct[]>;
+  initialCategories: ProductCategory[];
+  initialProductsByCategory: Record<string, MenuProduct[]>;
 };
 
 type MenuEmptyStateProps = {
@@ -61,17 +62,20 @@ export function MenuEmptyState({
   );
 }
 
-export function MenuCarousel({ emptyText, initialProductsByType }: MenuCarouselProps) {
-  const initialSelection = useMemo(() => getInitialMenuSelection(initialProductsByType), [initialProductsByType]);
+export function MenuCarousel({ emptyText, initialCategories, initialProductsByCategory }: MenuCarouselProps) {
+  const initialSelection = useMemo(
+    () => getInitialMenuSelection(initialCategories, initialProductsByCategory),
+    [initialCategories, initialProductsByCategory],
+  );
   const availableSections = useMemo(
-    () => getAvailableMenuSections(initialProductsByType),
-    [initialProductsByType],
+    () => getAvailableMenuSections(initialCategories),
+    [initialCategories],
   );
   const [activeSection, setActiveSection] = useState<MenuSection>(initialSelection.section);
-  const [activeType, setActiveType] = useState<MenuProductType | undefined>(initialSelection.type);
+  const [activeCategoryId, setActiveCategoryId] = useState<string | undefined>(initialSelection.category?.id);
   const sectionCategories = useMemo(
-    () => getMenuCategoriesForSection(initialProductsByType, activeSection),
-    [activeSection, initialProductsByType],
+    () => getMenuCategoriesForSection(initialCategories, activeSection),
+    [activeSection, initialCategories],
   );
   const [query, setQuery] = useState("");
   const [activeQuery, setActiveQuery] = useState("");
@@ -94,20 +98,20 @@ export function MenuCarousel({ emptyText, initialProductsByType }: MenuCarouselP
     ? "Prueba con otro nombre de café, platillo o preparación."
     : "Cuando haya nuevos cafés y platillos, los presentaremos aquí como parte de la experiencia en barra.";
 
-  const fetchProducts = useCallback((nextType: MenuProductType, nextQuery: string) => {
+  const fetchProducts = useCallback((nextCategoryId: string, nextQuery: string) => {
     const normalizedQuery = nextQuery.trim();
     const requestId = requestIdRef.current + 1;
     requestIdRef.current = requestId;
 
-    setActiveType(nextType);
+    setActiveCategoryId(nextCategoryId);
     setActiveQuery(normalizedQuery);
     setPageIndex(0);
     setFilterError(null);
-    setVisibleProducts(filterProductsByQuery(initialProductsByType[nextType] ?? [], normalizedQuery));
+    setVisibleProducts(filterProductsByQuery(initialProductsByCategory[nextCategoryId] ?? [], normalizedQuery));
 
     startTransition(async () => {
-      const response = await getPublicMenuProducts(nextType, normalizedQuery);
-      const fallbackProducts = filterProductsByQuery(initialProductsByType[nextType] ?? [], normalizedQuery);
+      const response = await getPublicMenuProducts(nextCategoryId, normalizedQuery);
+      const fallbackProducts = filterProductsByQuery(initialProductsByCategory[nextCategoryId] ?? [], normalizedQuery);
 
       if (requestId !== requestIdRef.current) {
         return;
@@ -116,10 +120,10 @@ export function MenuCarousel({ emptyText, initialProductsByType }: MenuCarouselP
       setVisibleProducts(response.error ? fallbackProducts : response.data);
       setFilterError(response.error ?? null);
     });
-  }, [initialProductsByType]);
+  }, [initialProductsByCategory]);
 
   useEffect(() => {
-    if (!activeType) {
+    if (!activeCategoryId) {
       return;
     }
 
@@ -134,36 +138,36 @@ export function MenuCarousel({ emptyText, initialProductsByType }: MenuCarouselP
     }
 
     const searchTimeout = window.setTimeout(() => {
-      fetchProducts(activeType, query);
+      fetchProducts(activeCategoryId, query);
     }, 320);
 
     return () => window.clearTimeout(searchTimeout);
-  }, [activeType, fetchProducts, query]);
+  }, [activeCategoryId, fetchProducts, query]);
 
   function changeSection(nextSection: MenuSection) {
     if (nextSection === activeSection) {
       return;
     }
 
-    const nextCategories = getMenuCategoriesForSection(initialProductsByType, nextSection);
-    const nextType = nextCategories[0];
+    const nextCategories = getMenuCategoriesForSection(initialCategories, nextSection);
+    const nextCategory = nextCategories[0];
 
-    if (!nextType) {
+    if (!nextCategory) {
       return;
     }
 
     setActiveSection(nextSection);
     skipDebouncedSearchRef.current = true;
-    fetchProducts(nextType, query);
+    fetchProducts(nextCategory.id, query);
   }
 
-  function changeType(nextType: MenuProductType) {
-    if (nextType === activeType && !filterError) {
+  function changeCategory(nextCategoryId: string) {
+    if (nextCategoryId === activeCategoryId && !filterError) {
       return;
     }
 
     skipDebouncedSearchRef.current = true;
-    fetchProducts(nextType, query);
+    fetchProducts(nextCategoryId, query);
   }
 
   function clearSearch() {
@@ -214,20 +218,20 @@ export function MenuCarousel({ emptyText, initialProductsByType }: MenuCarouselP
       {sectionCategories.length ? (
         <div className="mb-9 overflow-x-auto border-b border-[var(--blanco-roto)]/10 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div className="flex min-w-max items-end gap-10">
-          {sectionCategories.map((type) => (
+          {sectionCategories.map((category) => (
             <button
               className={cn(
                 "relative pb-5 text-xs font-semibold uppercase tracking-[0.22em] transition duration-300",
-                type === activeType
+                category.id === activeCategoryId
                   ? "text-[var(--blanco-roto)] after:absolute after:inset-x-0 after:bottom-[-1px] after:h-px after:bg-[var(--blanco-roto)]"
                   : "text-[var(--gris-suave)]/58 hover:text-[var(--gris-suave)]",
               )}
               disabled={isPending}
-              key={type}
-              onClick={() => changeType(type)}
+              key={category.id}
+              onClick={() => changeCategory(category.id)}
               type="button"
             >
-              {humanizeMenuProductType(type)}
+              {category.name}
             </button>
           ))}
           </div>
@@ -296,7 +300,7 @@ export function MenuCarousel({ emptyText, initialProductsByType }: MenuCarouselP
                 className="divide-y divide-[var(--blanco-roto)]/16"
                 exit={{ opacity: 0, x: -26 }}
                 initial={{ opacity: 0, x: 26 }}
-                key={`${activeType}-${activeQuery}-${safePageIndex}`}
+                key={`${activeCategoryId}-${activeQuery}-${safePageIndex}`}
                 transition={{ duration: 0.42, ease: "easeOut" }}
               >
                 {page.map((product) => (
@@ -317,7 +321,7 @@ export function MenuCarousel({ emptyText, initialProductsByType }: MenuCarouselP
                       ? "w-12 bg-[var(--blanco-roto)]"
                       : "w-7 bg-[var(--blanco-roto)]/25 hover:bg-[var(--blanco-roto)]/55",
                   )}
-                  key={`${activeType}-${index}`}
+                  key={`${activeCategoryId}-${index}`}
                   onClick={() => setPageIndex(index)}
                   type="button"
                 />
